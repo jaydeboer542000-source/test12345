@@ -32,6 +32,9 @@ This file is the source of truth for how an AI (Claude Code CLI, the embedded da
 - `cinematic-designer` (.claude/agents) — BUILDS a client site in their real house-style from business.json (incl. site_structure). Never fabricates.
 - `visual-design-critic` (.claude/agents) — critiques only, never builds. One of the jury lenses.
 
+## REFERENTIE-EERST (wet sinds 2026-07-03, boven alle bouwstappen)
+The machine NEVER designs a section from its own imagination. Every section starts from a concrete reference approved or supplied by Jay (a video, a site, a screenshot, or a proven blok from `platform/lib/blokken/`). No reference = ask Jay, don't guess. Build in small steps: one piece → show → thumb → next. More than 2 correction rounds on the same point = stop and build a mini-preview instead of iterating blind. Every thumbed piece becomes a blok in the library — the library is Jay's taste in files, and only proven bloks may be reused autonomously.
+
 ## Fixed build steps (the wow-machine — every build, in this order)
 **Eén bouwer per bestand:** never run two build/fix processes on the same site.html simultaneously (2026-07-03: two parallel runs corrupted each other's jury rounds). Check for running builds before starting a new one.
 
