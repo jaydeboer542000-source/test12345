@@ -45,23 +45,20 @@
       "needs-confirm: openingstijden (deurfoto onleesbaar), diensten, prijzen, boekingswidget, e-mail + 2 sfeerbeloftes (zie concept.json bevestigen_door_salon)"
     ]
   },
-  "updated": "2026-07-03T15:09:47.671Z",
+  "updated": "2026-07-03T15:30:04.148Z",
   "gate": {
     "pass": false,
     "checks": {
       "site": true,
-      "lint": false,
+      "lint": true,
       "jury": false,
-      "qc": false
+      "qc": false,
+      "fotos": true
     },
     "redenen": [
-      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg\" zit in een decor-laag (regel 228) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
-      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg\" zit in een decor-laag (regel 242) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
-      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg\" zit in een decor-laag (regel 255) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
-      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_4.jpg\" zit in een decor-laag (regel 273) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
-      "jury: geen eind-scores gevonden (jury-lus niet afgemaakt)",
+      "jury: geen jury.eind gevonden (jury-lus niet afgemaakt)",
       "qc: pass is niet true (echte screenshot-QC ontbreekt of faalde)"
     ],
-    "ts": "2026-07-03T15:09:47.671Z"
+    "ts": "2026-07-03T15:30:04.148Z"
   }
 }

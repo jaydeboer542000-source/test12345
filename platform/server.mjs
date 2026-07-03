@@ -43,10 +43,20 @@ function runGate(slug){
   const dir = path.join(CLIENTS, slug);
   const checks = {}; const redenen = [];
 
+  // status.json veilig lezen — onleesbaar = gate afbreken en NIETS overschrijven
+  const stPad = path.join(dir,'status.json');
+  let st = {};
+  if (fs.existsSync(stPad)) {
+    try { st = JSON.parse(fs.readFileSync(stPad,'utf8')); }
+    catch { return { pass:false, checks:{}, redenen:['status.json onleesbaar (build bezig?) — gate niet uitgevoerd, niets overschreven'], ts:new Date().toISOString() }; }
+  }
+
   const sitePad = path.join(dir, 'site.html');
+  let siteMtime = 0;
   if (!fs.existsSync(sitePad)) { checks.site = false; redenen.push('geen site.html'); }
   else {
     checks.site = true;
+    siteMtime = fs.statSync(sitePad).mtimeMs;
     const r = spawnSync('node', [path.join(ROOT,'lib','craft-lint.mjs'), sitePad], { encoding:'utf8', timeout: 30000 });
     let lint = null; try { lint = JSON.parse(r.stdout); } catch {}
     checks.lint = !!lint?.pass;
@@ -54,18 +64,45 @@ function runGate(slug){
     else if (!lint.pass) redenen.push(...lint.fouten.map(f => 'lint: ' + f));
   }
 
-  let st = {}; try { st = JSON.parse(fs.readFileSync(path.join(dir,'status.json'),'utf8')); } catch {}
-  const scores = st.jury?.eind
-    || (Array.isArray(st.jury?.rondes) && st.jury.rondes.length ? st.jury.rondes[st.jury.rondes.length-1].scores : null);
-  const nums = scores ? Object.values(scores).filter(v => typeof v === 'number') : [];
-  checks.jury = nums.length >= 4 && nums.every(v => v >= 8);
-  if (!checks.jury) redenen.push(scores ? 'jury: niet alle eind-scores >= 8' : 'jury: geen eind-scores gevonden (jury-lus niet afgemaakt)');
+  // Jury: alleen jury.eind telt (geen terugval op tussenrondes), mét rondes als werk-bewijs
+  const eind = st.jury?.eind;
+  const rondes = Array.isArray(st.jury?.rondes) ? st.jury.rondes : [];
+  const nums = eind ? Object.values(eind).filter(v => typeof v === 'number') : [];
+  checks.jury = nums.length >= 5 && nums.every(v => v >= 8) && rondes.length >= 1;
+  if (!checks.jury) redenen.push(!eind ? 'jury: geen jury.eind gevonden (jury-lus niet afgemaakt)'
+    : rondes.length < 1 ? 'jury: eind-scores zonder jury.rondes — geen bewijs van een echte jury-lus'
+    : 'jury: niet alle eind-scores >= 8, of minder dan 5 lenzen');
 
-  checks.qc = st.qc?.pass === true;
-  if (!checks.qc) redenen.push('qc: pass is niet true (echte screenshot-QC ontbreekt of faalde)');
+  // QC: de claim (qc.pass) én het artefact — screenshots die NIEUWER zijn dan site.html.
+  // Zo kan een oude goedkeuring nooit een nieuwe (slechtere) site dekken.
+  const shotDirs = [path.join(dir,'qc'), '/tmp/qc-shots'];
+  const versShot = (naam) => shotDirs.some(d => {
+    const f = path.join(d, `${slug}-${naam}.png`);
+    try { return fs.existsSync(f) && fs.statSync(f).mtimeMs >= siteMtime; } catch { return false; }
+  });
+  const shotsOk = versShot('desktop') && versShot('mobile');
+  checks.qc = st.qc?.pass === true && shotsOk;
+  if (st.qc?.pass !== true) redenen.push('qc: pass is niet true (echte screenshot-QC ontbreekt of faalde)');
+  else if (!shotsOk) redenen.push(`qc: geen screenshots (${slug}-desktop.png + ${slug}-mobile.png in qc/ of /tmp/qc-shots) die nieuwer zijn dan site.html — QC opnieuw draaien`);
+
+  // Foto-anker: goedkeuringen in business.json moeten overeenkomen met wat Jay
+  // ECHT in de photo-picker aanklikte (server-side kopie in platform/approvals/).
+  // Een agent die zichzelf photos.approved schrijft, valt hier door de mand.
+  let bizPhotos; try { bizPhotos = JSON.parse(fs.readFileSync(path.join(dir,'business.json'),'utf8')).photos; } catch {}
+  const claimed = bizPhotos?.approved || [];
+  if (claimed.length) {
+    let store = null;
+    try { store = JSON.parse(fs.readFileSync(path.join(ROOT,'approvals',`${slug}.json`),'utf8')); } catch {}
+    const anker = new Set(store?.approved || []);
+    const vals = claimed.filter(a => !anker.has(a));
+    checks.fotos = vals.length === 0;
+    if (!checks.fotos) redenen.push(`fotos: ${vals.length} goedkeuring(en) in business.json die Jay niet via de photo-picker heeft gezet (${vals.slice(0,2).join(', ')}) — selectie opnieuw opslaan in het dashboard`);
+  } else checks.fotos = true;
 
   const gate = { pass: Object.values(checks).every(Boolean), checks, redenen, ts: new Date().toISOString() };
-  writeJSON(path.join(dir,'status.json'), { ...st, gate, updated: gate.ts });
+  // status.json vers herlezen vlak vóór het schrijven (lint kan seconden duren; verlies geen tussentijdse velden)
+  let st2 = st; try { st2 = JSON.parse(fs.readFileSync(stPad,'utf8')); } catch { st2 = st; }
+  writeJSON(stPad, { ...st2, gate, updated: gate.ts });
   try { fs.appendFileSync(path.join(dir,'activity.jsonl'),
     JSON.stringify({ ts: gate.ts, msg: `poortwachter: ${gate.pass ? 'GESLAAGD ✓' : 'AFGEKEURD — ' + redenen.slice(0,3).join(' · ')}`, ok: gate.pass }) + '\n'); } catch {}
   rebuildIndex();
@@ -86,8 +123,9 @@ function rebuildIndex(){
       stage: st.stage || 'available',
       flags: st.flags || {},
       success_probability: st.lead?.success_probability ?? null,
-      // demo_url only when there is actually a site.html (or an explicit override) — no dead links
-      demo_url: st.demo_url || (fs.existsSync(path.join(dir,'site.html')) ? `clients/${slug}/site.html` : null),
+      // demo_url ALLEEN afgeleid van site.html — nooit uit status.json overnemen,
+      // anders kan een agent de poort omzeilen door een ander (ongelint) bestand te tonen
+      demo_url: fs.existsSync(path.join(dir,'site.html')) ? `clients/${slug}/site.html` : null,
       gate: st.gate ? !!st.gate.pass : null,
       updated: st.updated || null });
   }
@@ -115,16 +153,17 @@ const server = http.createServer(async (req, res) => {
       if (p === '/api/status' && req.method==='POST') {
         const { slug, patch } = await readBody(req);
         const s = safeSlug(slug); if(!s) return send(res,400,{error:'bad slug'});
+        // Beschermde velden: gate/qc/jury zet alleen de poortwachter of de QC-run zelf,
+        // nooit een binnenkomende patch (anders keurt een agent zich alsnog zelf goed)
+        if (patch) { delete patch.gate; delete patch.qc; delete patch.jury; }
+        // Poortwachter (fail-closed): bij verzenden/live het bewijs VERS herbeoordelen —
+        // nooit vertrouwen op een oud opgeslagen oordeel
+        if (patch?.stage && ['sent','live'].includes(patch.stage)) {
+          const g = runGate(s);
+          if (!g.pass) return send(res,409,{error:'Poortwachter: afgekeurd — '+g.redenen.slice(0,3).join(' · ')});
+        }
         const f = path.join(CLIENTS,s,'status.json');
         const cur = fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')):{};
-        // QC-gate (fail-closed): een demo mag pas 'sent'/'live' als de echte QC geslaagd is
-        if (patch?.stage && ['sent','live'].includes(patch.stage) && !cur.qc?.pass) {
-          return send(res,409,{error:'QC-gate: qc.pass is niet true — eerst de echte QC-run (screenshots) laten slagen'});
-        }
-        // Poortwachter-gate: en het volledige bewijs (lint + jury >= 8 + qc) moet er zijn
-        if (patch?.stage && ['sent','live'].includes(patch.stage) && cur.gate?.pass !== true) {
-          return send(res,409,{error:'Poortwachter: nog niet goedgekeurd — draai de poortwachter-check en fix de redenen eerst'});
-        }
         const next = { ...cur, ...patch, flags:{...(cur.flags||{}),...(patch?.flags||{})}, updated:new Date().toISOString() };
         writeJSON(f, next);
         rebuildIndex();
@@ -293,6 +332,12 @@ Jay`;
           note:'alleen deze foto\'s gebruiken; leeg + mode no-photos = sfeer-route (géén nep-interieurs)',
           decided_by:'Jay', decided:new Date().toISOString().slice(0,10) };
         writeJSON(bp,biz);
+        // Server-side anker van Jay's keuze (buiten de klant-map): de poortwachter
+        // vergelijkt business.json hiermee, zodat een agent zich niet zelf de duim geeft
+        try{
+          fs.mkdirSync(path.join(ROOT,'approvals'),{recursive:true});
+          writeJSON(path.join(ROOT,'approvals',`${s}.json`), { approved: ok, mode: biz.photos.mode, ts: new Date().toISOString() });
+        }catch{}
         try{ fs.appendFileSync(path.join(CLIENTS,s,'activity.jsonl'),
           JSON.stringify({ts:new Date().toISOString(),msg:`foto-selectie: ${biz.photos.mode==='no-photos'?'sfeer-route (geen foto\'s)':ok.length+' foto\'s goedgekeurd'}`,ok:true})+'\n'); }catch{}
         return send(res,200,{saved:true, approved:ok, mode:biz.photos.mode});
@@ -329,17 +374,29 @@ Jay`;
         const { slug, action } = await readBody(req);
         const s = safeSlug(slug); if(!s) return send(res,400,{error:'bad slug'});
         const PROMPTS = {
-          build: 'Jij draait de WOW-MACHINE voor deze klant. Lees eerst ../../AGENTS.md volledig (Fixed build steps + THE FORM zijn wet). Stappen: (0) LAAD HET FUNDAMENT uit ../../lib/: motion-tokens.css (beweging ALLEEN hieruit), typografie-recepten.md (kies één duo), blokken/ (start van bewezen bouwstenen), grain-licht.css (standaard korrel+licht), referentie/ANKER.md (jury vergelijkt hiertegen). (1) CONCEPT-TREKKER: bestaat concept.json niet of is die zwak, destilleer dan uit logo/naam/echte data hét ene merk-idee met een doorlopende VERTELLER en per scène een HOOFDROLSPELER; schrijf concept.json. (2) BOUW site.html volgens THE FORM (toneel, één schermhoogte), gedreven door concept.json. FOTO-REGIE: uitsluitend business.json photos.approved; leeg + mode no-photos = sfeer zonder nep-interieurs; geen photos-veld = stoppen en melden dat Jay moet kiezen. Na de build MOET `node ../../lib/craft-lint.mjs site.html` slagen; faalt hij, fix eerst tot hij slaagt. EXTRA HARDE FOTO-REGELS: gescrapete/Street View-foto’s NOOIT als achtergrond-behang (donker gewassen foto met tekst erover = de standaard-template-fout); echte foto’s zijn HELD (gekaderd/gecomponeerd) of doen niet mee; zonder sterke goedgekeurde foto’s bouw je de held-formule (donkere sfeerwereld + één held in merkgloed — zie Stijl-les in AGENTS.md). (3) JURY-LUS: spawn 6 kritische juryleden (lenzen: concept/rode-draad, typografie, motion, eerlijkheid/data, mobiel, deelbaarheid — die laatste vraagt: snapt een partner die ’s avonds meekijkt zonder uitleg wat dit is, waarom het goed is en wat de volgende stap is? zie ../../lib/verkoop-regels.md) die met ECHTE screenshots (bash ../../qc-client.sh of playwright) scoren /10 + topfix geven; fix alles; herhaal tot ALLE scores >=8; schrijf de rondes in status.json onder jury.rondes en de eindscores onder jury.eind. (4) Draai de QC en zet qc in status.json (alleen pass:true na echte screenshot-controle). (5) POORTWACHTER: de server controleert daarna ZELF het bewijs (craft-lint + jury.eind allemaal >=8 + qc.pass). Zonder dat bewijs wordt deze build als MISLUKT geregistreerd — klaar-typen zonder bewijs heeft dus geen zin. Rapporteer aan het eind: concept in 1 zin, juryscores per ronde, wat er nog open staat.',
-          qc: 'Draai EERST het echte QC-script: bash ../../qc-client.sh (maakt Chrome-screenshots desktop+mobiel in qc/). Bekijk daarna die screenshots ZELF stuk voor stuk + check console/404s. Pas als alles echt klopt: zet qc {pass:true, notes:[...]} in status.json; anders pass:false met wat er mis is. Nooit pass:true zonder de screenshots gezien te hebben.',
+          build: 'Jij draait de WOW-MACHINE voor deze klant. Lees eerst ../../../AGENTS.md volledig (Fixed build steps + THE FORM zijn wet). Stappen: (0) LAAD HET FUNDAMENT uit ../../lib/: motion-tokens.css (beweging ALLEEN hieruit), typografie-recepten.md (kies één duo), blokken/ (start van bewezen bouwstenen), grain-licht.css (standaard korrel+licht), referentie/ANKER.md (jury vergelijkt hiertegen). (1) CONCEPT-TREKKER: bestaat concept.json niet of is die zwak, destilleer dan uit logo/naam/echte data hét ene merk-idee met een doorlopende VERTELLER en per scène een HOOFDROLSPELER; schrijf concept.json. (2) BOUW site.html volgens THE FORM (toneel, één schermhoogte), gedreven door concept.json. FOTO-REGIE: uitsluitend business.json photos.approved; leeg + mode no-photos = sfeer zonder nep-interieurs; geen photos-veld = stoppen en melden dat Jay moet kiezen. Na de build MOET `node ../../lib/craft-lint.mjs site.html` slagen; faalt hij, fix eerst tot hij slaagt. EXTRA HARDE FOTO-REGELS: gescrapete/Street View-foto’s NOOIT als achtergrond-behang (donker gewassen foto met tekst erover = de standaard-template-fout); echte foto’s zijn HELD (gekaderd/gecomponeerd) of doen niet mee; zonder sterke goedgekeurde foto’s bouw je de held-formule (donkere sfeerwereld + één held in merkgloed — zie Stijl-les in AGENTS.md). (3) JURY-LUS: spawn 6 kritische juryleden (lenzen: concept/rode-draad, typografie, motion, eerlijkheid/data, mobiel, deelbaarheid — die laatste vraagt: snapt een partner die ’s avonds meekijkt zonder uitleg wat dit is, waarom het goed is en wat de volgende stap is? zie ../../lib/verkoop-regels.md) die met ECHTE screenshots (OUT=qc bash ../../qc-client.sh $(basename "$PWD") of playwright) scoren /10 + topfix geven; fix alles; herhaal tot ALLE scores >=8; schrijf de rondes in status.json onder jury.rondes en de eindscores onder jury.eind. (4) Draai de QC: OUT=qc bash ../../qc-client.sh $(basename "$PWD") en zet qc in status.json (alleen pass:true na echte screenshot-controle; de poortwachter eist qc/<slug>-desktop.png en qc/<slug>-mobile.png NIEUWER dan site.html). (5) POORTWACHTER: de server controleert daarna ZELF het bewijs (craft-lint + jury.eind allemaal >=8 + qc.pass + verse screenshots + foto-anker). Zonder dat bewijs wordt deze build als MISLUKT geregistreerd — klaar-typen zonder bewijs heeft dus geen zin. Rapporteer aan het eind: concept in 1 zin, juryscores per ronde, wat er nog open staat.',
+          qc: `Draai EERST het echte QC-script mét lokale output-map: OUT=qc bash ../../qc-client.sh ${s} (maakt Chrome-screenshots desktop+mobiel in qc/ — de poortwachter eist dat die bestanden bestaan én nieuwer zijn dan site.html). Bekijk daarna die screenshots ZELF stuk voor stuk + check console/404s. Pas als alles echt klopt: zet qc {pass:true, notes:[...]} in status.json; anders pass:false met wat er mis is. Nooit pass:true zonder de screenshots gezien te hebben.`,
           mail: 'Lees EERST ../../lib/verkoop-regels.md en pas ALLE regels daaruit toe. Schrijf dan een korte Nederlandse outreach-mail voor deze klant (business.json, max ~120 woorden): (1) herkenning eerst — open over HÚN zaak met echte data, (2) één zin probleem + één zin oplossing met de demo-link, (3) één bewijszin (Milano) + risico-omkering, (4) deelbaarheids-zin ("stuur gerust door naar je partner/compagnon"), (5) afsluiten met één concrete kleine vraag — nooit "laat maar weten". Geen prijzen in mail 1. Sla op als drafts/outreach_<datum>.md. NOOIT versturen.'
         };
         const base = PROMPTS[action]; if(!base) return send(res,400,{error:'onbekende actie'});
         const cwd = path.join(CLIENTS,s);
         if(!fs.existsSync(cwd)) return send(res,404,{error:'klant bestaat niet'});
         try{ const sp=path.join(cwd,'site.html'); if(fs.existsSync(sp)) fs.copyFileSync(sp, path.join(cwd,'site.bak.html')); }catch{}
+        // Bij een nieuwe build: oud bewijs (jury/qc/gate) wissen — dat hoorde bij de vórige site
+        if (action==='build') {
+          try {
+            const stp = path.join(cwd,'status.json');
+            if (fs.existsSync(stp)) {
+              const cur = JSON.parse(fs.readFileSync(stp,'utf8'));   // onleesbaar → catch, niets wissen
+              delete cur.jury; delete cur.qc; delete cur.gate;
+              cur.flags = { ...(cur.flags||{}), building:true };
+              writeJSON(stp, cur);
+            }
+          } catch {}
+        }
         res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Accel-Buffering':'no'});
         const t0 = Date.now();
-        const prompt = `Je werkt in het Cinematic Rebuild project voor klant "${s}". Lees ../../AGENTS.md. Verzin nooit klantdata. Opdracht: ${base}`;
+        const prompt = `Je werkt in het Cinematic Rebuild project voor klant "${s}". Lees ../../../AGENTS.md (de projectregels). Verzin nooit klantdata. Opdracht: ${base}`;
         const cp = spawn('claude', ['-p', prompt, '--output-format','stream-json','--verbose','--permission-mode','acceptEdits','--add-dir',cwd,'--add-dir',path.join(ROOT,'..')], { cwd, env:process.env, stdio:['ignore','pipe','pipe'] });
         let meta=null, buf='';
         cp.stdout.on('data', d=>{
@@ -392,11 +449,29 @@ Jay`;
         try{ const sp=path.join(cwd,'site.html'); if(fs.existsSync(sp)) fs.copyFileSync(sp, path.join(cwd,'site.bak.html')); }catch{}
         const clean = String(msg||'').slice(0,4000);
         res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Accel-Buffering':'no'});
-        const prompt = `You are working in the Cinematic Rebuild project for client "${s}". Read ../../AGENTS.md and ../../platform/VISION.md for the rules. Never fabricate client data. Task: ${clean}`;
+        const prompt = `You are working in the Cinematic Rebuild project for client "${s}". Read ../../../AGENTS.md and ../../VISION.md for the rules. Never fabricate client data. Task: ${clean}`;
+        const siteP = path.join(cwd,'site.html');
+        const mtimeVoor = fs.existsSync(siteP) ? fs.statSync(siteP).mtimeMs : 0;
         const cp = spawn('claude', ['-p', prompt, '--permission-mode','acceptEdits','--add-dir',cwd,'--add-dir',path.join(ROOT,'..')], { cwd, env:process.env, stdio:['ignore','pipe','pipe'] });
         cp.stdout.on('data', d=>res.write(d));
         cp.stderr.on('data', d=>res.write(d));
-        cp.on('close', ()=>res.end());
+        cp.on('close', ()=>{
+          // Site gewijzigd via chat? Dan is oud jury/qc-bewijs ongeldig → wissen + poort herbeoordelen
+          try {
+            const mtimeNa = fs.existsSync(siteP) ? fs.statSync(siteP).mtimeMs : 0;
+            if (mtimeNa !== mtimeVoor) {
+              const stp = path.join(cwd,'status.json');
+              if (fs.existsSync(stp)) {
+                const cur = JSON.parse(fs.readFileSync(stp,'utf8'));
+                delete cur.jury; delete cur.qc;
+                writeJSON(stp, cur);
+              }
+              const g = runGate(s);
+              res.write(`\n[poortwachter] site gewijzigd → oud bewijs gewist; oordeel: ${g.pass?'GESLAAGD ✓':'AFGEKEURD — '+g.redenen.slice(0,2).join(' · ')}`);
+            }
+          } catch {}
+          res.end();
+        });
         cp.on('error', e=>{ res.write('\n[server] kon claude niet starten: '+e.message); res.end(); });
         req.on('close', ()=>{ try{cp.kill()}catch{} });
         return;

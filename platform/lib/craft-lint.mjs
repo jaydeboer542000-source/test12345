@@ -88,18 +88,26 @@ const regelVan = (index) => html.slice(0, index).split('\n').length;
     const tijd = waarde.match(/(\d*\.?\d+)\s*(ms|s)\b/i);
     if (tijd) {
       const ms = naarMs(tijd[1], tijd[2]);
-      if (ms > 0 && ms < MIN_MS) {
+      // < 50ms = animatie feitelijk UIT (o.a. het standaard reduced-motion-patroon
+      // met 0.01ms) — dat is geen "snelle animatie" en mag dus gewoon.
+      if (ms >= 50 && ms < MIN_MS) {
         fouten.push(`Te snelle ${soort}: "${tijd[0]}" (regel ${regelVan(m.index)}) — minimaal ${MIN_MS}ms, langzaam voelt duur.`);
       }
     }
   }
 
   // b) GSAP / JS: duration: 0.4  (seconden) of duration: 400 (>=50 = ms aannemen)
-  const jsDuur = /\bduration\s*:\s*(\d*\.?\d+)/gi;
+  //    Lookbehind voorkomt dat CSS 'animation-duration:'/'transition-duration:'
+  //    hier nogmaals (fout) geteld wordt; die beoordeelt check 2a al.
+  //    Een eenheid erachter (s/ms) = CSS, dus overslaan. En scrub-timelines
+  //    gebruiken eigen eenheden — binnen 80 tekens 'scrub' = overslaan.
+  const jsDuur = /(?<![-\w])duration\s*:\s*(\d*\.?\d+)(?!\s*m?s\b)/gi;
   while ((m = jsDuur.exec(html)) !== null) {
+    const context = html.slice(Math.max(0, m.index - 80), m.index + 80);
+    if (/scrub/i.test(context)) continue;
     const n = parseFloat(m[1]);
     const ms = n >= 50 ? n : n * 1000; // klein getal = seconden (GSAP), groot = ms
-    if (ms > 0 && ms < MIN_MS) {
+    if (ms >= 50 && ms < MIN_MS) {
       fouten.push(`Te snelle JS-animatie: duration ${m[1]} (regel ${regelVan(m.index)}) — minimaal ${MIN_MS}ms.`);
     }
   }
@@ -123,15 +131,16 @@ const regelVan = (index) => html.slice(0, index).split('\n').length;
     }
   }
 
-  // b) font-family declaraties in CSS
+  // b) font-family declaraties in CSS — alleen de EERSTE echte naam per declaratie
+  //    telt als keuze; alles erna is fallback (Georgia, Arial, -apple-system…) en
+  //    dat is juist nette professionele praktijk, geen extra font.
   const generiek = new Set(['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy', 'system-ui', 'ui-serif', 'ui-sans-serif', 'ui-monospace', 'inherit', 'initial', 'unset']);
   for (const decl of html.matchAll(/font-family\s*:\s*([^;{}]+)/gi)) {
     for (let naam of decl[1].split(',')) {
       naam = naam.trim().replace(/^['"]|['"]$/g, '');
       if (!naam || naam.startsWith('var(') || generiek.has(naam.toLowerCase())) continue;
-      // Fallback-stapels als "-apple-system", "Segoe UI" enz. niet meetellen als aparte keuze?
-      // Jawel: elke ECHTE fontnaam telt. Systeemstack-namen zijn zeldzaam in onze sites.
       families.add(naam.toLowerCase());
+      break; // eerste echte naam = de gekozen face; fallbacks overslaan
     }
   }
 
@@ -195,66 +204,88 @@ const regelVan = (index) => html.slice(0, index).split('\n').length;
 }
 
 // ============================================================
-// CHECK 7 — Echte foto's alleen mét Jay's duim
-// Regel uit AGENTS.md: gescrapete Google-foto's en Street View
-// mogen pas gebruikt worden na goedkeuring via de photo-picker
-// (business.json → photos.approved). Zonder duim = fout.
-// Dit ving de Duo 4 You-misser (2026-07-03): build gebruikte
-// gescrapete foto's vóórdat Jay ze had gezien.
+// CHECK 7 — ALLOWLIST: elk gebruikt beeld moet verantwoord zijn
+// Fail-closed geleerd van de omzeil-test (2026-07-03): op mapnaam
+// filteren ("scraped") is te omzeilen door bestanden te hernoemen.
+// Daarom omgekeerd: een beeld mag ALLEEN als het
+//   a) door Jay is goedgekeurd (business.json → photos.approved), of
+//   b) Replicate-decor is (assets/decor/…), of
+//   c) een merk-asset is (logo*/favicon*).
+// Al het andere — hoe de map ook heet — is een fout.
 // ============================================================
 {
-  // Alle verwijzingen naar bestanden verzamelen: img/video/poster + CSS url()
-  const refs = new Set();
-  for (const m of html.matchAll(/(?:src|poster)\s*=\s*["']([^"']+)["']/gi)) refs.add(m[1]);
-  for (const m of html.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) refs.add(m[1]);
-
   const norm = (s) => s.replace(/^\.?\//, '');
-  // "Echte foto" = gescraped van Google/Street View — daar zit het
-  // verkeerd-pand/verouderd-risico, dus die zijn duim-plichtig.
-  const isEchteFoto = (r) => /^assets\/scraped\//i.test(r) || /streetview/i.test(r);
-  const echteFotos = [...refs].map(norm).filter(isEchteFoto);
+  const refs = new Set();
+  for (const m of html.matchAll(/(?:src|poster)\s*=\s*["']([^"']+)["']/gi)) refs.add(norm(m[1]));
+  for (const m of html.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) refs.add(norm(m[1]));
 
-  if (echteFotos.length) {
-    let photos = undefined; // undefined = geen photos-veld in business.json
-    try {
-      const biz = JSON.parse(readFileSync(join(dirname(resolve(pad)), 'business.json'), 'utf8'));
-      photos = biz.photos;
-    } catch { /* geen business.json naast site.html → behandelen als geen duim */ }
+  // Alleen lokale asset-verwijzingen beoordelen (geen data:, http-fonts, ankers)
+  const beelden = [...refs].filter(r => /^assets\//i.test(r) && /\.(jpe?g|png|webp|avif|mp4|webm)$/i.test(r));
 
-    const approved = photos?.approved || [];
-    for (const r of [...new Set(echteFotos)]) {
-      if (!approved.includes(r)) {
-        fouten.push(`Echte foto "${r}" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim.`);
-      }
-    }
+  let photos = undefined;
+  try {
+    const biz = JSON.parse(readFileSync(join(dirname(resolve(pad)), 'business.json'), 'utf8'));
+    photos = biz.photos;
+  } catch { /* geen business.json → niets is goedgekeurd */ }
+  const approved = photos?.approved || [];
+
+  const isDecor = (r) => /^assets\/decor\//i.test(r);
+  const isMerk  = (r) => /(^|\/)(logo[^/]*|favicon[^/]*)$/i.test(r);
+
+  for (const r of beelden) {
+    if (approved.includes(r) || isDecor(r) || isMerk(r)) continue;
+    fouten.push(`Beeld "${r}" is niet verantwoord: niet door Jay goedgekeurd (photo-picker), geen Replicate-decor (assets/decor/) en geen merk-asset (logo/favicon). Echte foto's alleen ná de duim — hernoemen helpt niet.`);
   }
 }
 
 // ============================================================
-// CHECK 8 — Gescrapete foto's nooit als achtergrond-behang
+// CHECK 8 — Echte foto's nooit als achtergrond-behang
 // Regel (les van Duo 4 You, 2026-07-03): een rauwe klantfoto
 // donker wassen en er tekst overheen zetten = standaard-template,
 // geen cinema. Echte foto's zijn HELD (gekaderd, gecomponeerd)
 // of ze doen niet mee. Achtergrond-sfeer = Replicate-decor.
+// "Echte foto" = elk beeld dat GEEN decor en GEEN merk-asset is
+// (dus ook goedgekeurde foto's: die mogen wél als held, niet als behang).
 // ============================================================
 {
+  // Comments één keer strippen: voorkomt catastrofaal terugzoeken in de regex
+  // én verstop-trucs via commentaar tussen decor-div en img.
+  const kaal = html.replace(/<!--[\s\S]*?-->/g, '');
+  const regelVanKaal = (i) => kaal.slice(0, i).split('\n').length;
   const norm = (s) => s.replace(/^\.?\//, '');
-  const isEchteFoto = (r) => /^assets\/scraped\//i.test(r) || /streetview/i.test(r);
+  const isFotoAsset = (r) => /^assets\//i.test(r) && /\.(jpe?g|png|webp|avif)$/i.test(r)
+    && !/^assets\/decor\//i.test(r) && !/(^|\/)(logo[^/]*|favicon[^/]*)$/i.test(r);
 
-  // a) In CSS als background/url() = per definitie behang
-  for (const m of html.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) {
-    if (isEchteFoto(norm(m[1]))) {
-      fouten.push(`Echte foto "${m[1]}" als CSS-achtergrond (regel ${regelVan(m.index)}) — gescrapete foto's nooit als behang; gebruik held-compositie of Replicate-decor.`);
+  let approved8 = [];
+  try {
+    const biz = JSON.parse(readFileSync(join(dirname(resolve(pad)), 'business.json'), 'utf8'));
+    approved8 = biz.photos?.approved || [];
+  } catch { /* geen business.json → niets goedgekeurd */ }
+
+  // Ongoedgekeurde foto als achtergrond = harde fout.
+  // Goedgekeurde foto in een decor-laag = waarschuwing: MAG (held/Ken Burns-hero
+  // op een echte foto is vakwerk), maar de jury moet expliciet oordelen dat het
+  // geen donker-behang-met-tekst is (de Duo-fout).
+  const meld = (r, plek, regelnr) => {
+    if (approved8.includes(r)) {
+      waarschuwingen.push(`Goedgekeurde foto "${r}" als ${plek} (regel ~${regelnr}) — mag als held-compositie, maar jury moet bevestigen dat dit geen donker-behang-met-tekst is.`);
+    } else {
+      fouten.push(`Echte foto "${r}" als ${plek} (regel ~${regelnr}) zonder goedkeuring — foto's nooit als behang; held-compositie of Replicate-decor (zie AGENTS.md Stijl-les).`);
     }
+  };
+
+  // a) In CSS als background/url()
+  for (const m of kaal.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) {
+    const r = norm(m[1]);
+    if (isFotoAsset(r)) meld(r, 'CSS-achtergrond', regelVanKaal(m.index));
   }
 
   // b) <img> als DIRECT kind van een decor-laag (div/figure met "decor" in de class).
   //    Bewust strak: een gekaderde foto-kaart elders in de scène (held-compositie,
   //    zoals Milano's vestigings-kaarten) is juist goed en mag niet vals afgekeurd worden.
-  for (const m of html.matchAll(/<(?:div|figure)\b[^>]*class\s*=\s*["'][^"']*decor[^"']*["'][^>]*>\s*(?:<!--[\s\S]*?-->\s*)*<img\b[^>]*src\s*=\s*["']([^"']+)["']/gi)) {
-    if (isEchteFoto(norm(m[1]))) {
-      fouten.push(`Echte foto "${m[1]}" zit in een decor-laag (regel ${regelVan(m.index)}) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).`);
-    }
+  for (const m of kaal.matchAll(/<(?:div|figure)\b[^>]*class\s*=\s*["'][^"']*decor[^"']*["'][^>]*>\s*<img\b[^>]*src\s*=\s*["']([^"']+)["']/gi)) {
+    const r = norm(m[1]);
+    if (isFotoAsset(r)) meld(r, 'decor-laag', regelVanKaal(m.index));
   }
 }
 

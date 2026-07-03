@@ -81,19 +81,21 @@
     "building": false,
     "needs_revision": false
   },
-  "updated": "2026-07-03T15:09:47.738Z",
+  "updated": "2026-07-03T15:29:30.848Z",
   "gate": {
     "pass": false,
     "checks": {
       "site": true,
       "lint": false,
       "jury": true,
-      "qc": true
+      "qc": false,
+      "fotos": true
     },
     "redenen": [
-      "lint: Echte foto \"assets/streetview_centrum.jpg\" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim.",
-      "lint: Echte foto \"assets/streetview_zuiderpoort.jpg\" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim."
+      "lint: Beeld \"assets/streetview_centrum.jpg\" is niet verantwoord: niet door Jay goedgekeurd (photo-picker), geen Replicate-decor (assets/decor/) en geen merk-asset (logo/favicon). Echte foto's alleen ná de duim — hernoemen helpt niet.",
+      "lint: Beeld \"assets/streetview_zuiderpoort.jpg\" is niet verantwoord: niet door Jay goedgekeurd (photo-picker), geen Replicate-decor (assets/decor/) en geen merk-asset (logo/favicon). Echte foto's alleen ná de duim — hernoemen helpt niet.",
+      "qc: geen screenshots (milano-desktop.png + milano-mobile.png in qc/ of /tmp/qc-shots) die nieuwer zijn dan site.html — QC opnieuw draaien"
     ],
-    "ts": "2026-07-03T15:09:47.738Z"
+    "ts": "2026-07-03T15:29:30.848Z"
   }
 }

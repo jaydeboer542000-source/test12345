@@ -785,6 +785,7 @@
         for(;;){ const {value,done}=await rd.read(); if(done) break; log.textContent+=dec.decode(value); log.scrollTop=log.scrollHeight; }
       }catch{ log.textContent="Servertje draait niet?"; }
       btn.textContent=idle; btn.disabled=false;
+      delete cache[slug]; loadIndex();   // verse gate/status tonen na build/qc/mail
     }
     document.getElementById("tBuild").addEventListener("click",e=>runAction(e.target,"build","AI bouwt…"));
     document.getElementById("tGate").addEventListener("click",async e=>{
@@ -863,7 +864,9 @@
     const name = id.name || client.name || slug;
     const stage = st.stage || client.stage;
     const qc = st.qc||{};
-    const demo = st.demo_url || client.demo_url;
+    // demo-link ALTIJD uit de index (server-afgeleid van site.html) — nooit uit
+    // status.json, anders kan een agent een ongelint bestand als "demo" tonen
+    const demo = client.demo_url;
 
     let h = `<div class="d-head">
       <div class="name">${esc(name)}</div>
