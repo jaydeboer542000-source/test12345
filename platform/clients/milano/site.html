@@ -14,8 +14,8 @@
 <style>
 /* ════════════════════════════════════════════════════════════
    KAPSALON MILANO — "La Linea Rossa"
-   Eén gepind toneel; 5 scènes NAAST elkaar als filmstrook.
-   Verticale scroll = camera zijwaarts (GSAP pin + scrub).
+   Eén gepind toneel; scènes wisselen VERTICAAL binnen het kader
+   (Jay-regel: nooit zijwaarts). Scroll = voortgang (GSAP pin).
    Typografie-duo A1: Fraunces (display) + Work Sans (tekst).
    Beweging: uitsluitend motion-tokens.css.
    ════════════════════════════════════════════════════════════ */
@@ -61,26 +61,20 @@ img{max-width:100%;height:auto}
   padding:clamp(24px,5vw,72px);overflow:hidden;background:var(--papier)}
 .scene .kamer{position:relative;z-index:8;width:100%;max-width:1160px}
 
+/* ── VERTICAAL TONEEL (Jay-regel, definitief en 3× bevestigd):
+   scènes bewegen ALTIJD omhoog/omlaag binnen het vaste kader —
+   nooit zijwaarts. De vertrekkende scène stijgt zachtjes en vervaagt,
+   de nieuwe komt van onder omhoog. De motor (bijwerken) stuurt
+   opacity/translateY per scène. */
 html.film #toneel{height:100svh;overflow:hidden}
-html.film #strook{display:flex;width:max-content;height:100svh}
-html.film .scene{width:100vw;height:100svh;flex:0 0 100vw;min-height:0;
-  background:transparent} /* het doorlopende decor schijnt erdoorheen */
+html.film #strook{position:relative;width:100%;height:100svh}
+html.film .scene{position:absolute;inset:0;width:100%;height:100svh;min-height:0;
+  opacity:0;visibility:hidden;will-change:transform,opacity;
+  background:var(--papier)}
 html.film .scene .kamer{height:100%}
 
-/* ── doorlopend decor: één trage parallax-band onder ALLE scènes ─
-   Beweegt op ±55% van het camera-tempo, zodat elke scène-wissel
-   als reizen voelt in plaats van wit-op-wit. Alleen film-modus. */
+/* de oude horizontale parallax-band is vervallen (zijwaarts = verboden) */
 #decor-band{display:none}
-html.film #decor-band{display:flex;position:absolute;top:0;left:0;
-  height:100%;width:max-content;z-index:0;pointer-events:none;
-  will-change:transform}
-#decor-band img{width:76vw;height:100%;flex:0 0 76vw;object-fit:cover;
-  opacity:.55;
-  /* zachte alfa-randen + overlap: géén harde naden in het decor */
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14%,#000 86%,transparent 100%);
-  mask-image:linear-gradient(90deg,transparent 0,#000 14%,#000 86%,transparent 100%)}
-#decor-band img + img{margin-left:-10vw}
-#decor-band img.zacht{opacity:.4}
 
 /* mobiel-gate: onder 768px géén film — schone verticale stapeling,
    scènes compact (geen halve lege viewports), hero blijft vol scherm */
@@ -134,14 +128,20 @@ html.film #stipjes{display:flex;position:fixed;right:18px;top:50%;
 #s1 .kamer{display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center}
 /* het echte logo: klein linksboven, het beeld draagt de scène */
-#s1 .logo-hoek{position:absolute;top:clamp(18px,3.5vh,36px);
-  left:clamp(18px,3.5vw,44px);width:clamp(110px,12vw,168px);
-  height:auto;z-index:9}
-/* deeltjes-canvas voor de logo-overgang (blok 06): dekt de hele scène,
-   zodat de snippers ver kunnen wegwaaien richting scène 2 */
-#s1 .logo-deeltjes{position:absolute;inset:0;width:100%;height:100%;
-  pointer-events:none;z-index:9}
-#s1 .hero-kop{font-size:clamp(2.8rem,7vw,5.8rem);max-width:14ch}
+/* Jays logo-intro-video = dé header van scène 1. Scrubt met de scroll:
+   naar beneden scrollen speelt de outro (logo lost op in snippers) af
+   als opening naar scène 2; terugscrollen spoelt exact terug.
+   multiply laat de lichte video-achtergrond wegvallen in het papier. */
+#s1 .logo-intro{display:block;width:min(58vw,720px);height:auto;
+  margin:0 auto;mix-blend-mode:multiply;
+  filter:brightness(1.07);
+  /* zachte ovaal: de grijze video-achtergrond smelt weg in het papier,
+     zodat alleen het logo lijkt te zweven — geen harde videorand */
+  -webkit-mask-image:radial-gradient(ellipse 62% 52% at 50% 47%,#000 46%,transparent 74%);
+  mask-image:radial-gradient(ellipse 62% 52% at 50% 47%,#000 46%,transparent 74%)}
+@media (max-width:767px){ #s1 .logo-intro{width:min(86vw,480px)} }
+#s1 .hero-kop{font-size:clamp(1.35rem,2.4vw,2rem);max-width:none;
+  margin-top:clamp(10px,2vh,20px)}
 #s1 .subkop{margin:1.25rem 0 0;max-width:34ch}
 #s1 .hint{position:absolute;left:0;right:0;bottom:clamp(84px,13vh,120px);
   z-index:9;margin:0;font-size:.8rem;letter-spacing:.18em;
@@ -365,18 +365,9 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
 
 <h1 class="sr-only">Kapsalon Milano — kapper in Wijchen, twee salons, met en zonder afspraak</h1>
 
-<!-- ═══════════ HET TONEEL: 5 scènes naast elkaar ═══════════ -->
+<!-- ═══════════ HET TONEEL: scènes wisselen VERTICAAL in het vaste kader ═══════════ -->
 <div id="toneel">
   <div id="strook">
-    <!-- doorlopend decor: schuift trager mee (parallax) onder alle scènes -->
-    <div id="decor-band" aria-hidden="true">
-      <img src="assets/decor/s1-entree-v1.jpg" alt="">
-      <img src="assets/decor/s2-ritueel-v2.jpg" alt="">
-      <img src="assets/decor/s3-applaus-v1.jpg" alt="">
-      <img src="assets/decor/s4-zaken-v1.jpg" alt="">
-      <img class="zacht" src="assets/decor/s5-menu-v2.jpg" alt="">
-      <img src="assets/decor/s5-menu-v1.jpg" alt="">
-    </div>
     <div id="rode-lijn" aria-hidden="true"></div>
 
     <!-- SCÈNE 1 — ENTREE (full-bleed beeld; logo klein linksboven) -->
@@ -387,13 +378,13 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
       <svg id="lijn-boog" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <path d="M 430 620 C 640 700, 980 660, 1140 500 S 1360 220, 1290 130"/>
       </svg>
-      <img class="logo-hoek fade-only" style="--i:0" src="assets/logo-vrij.png"
-           alt="Kapsalon Milano" width="2400" height="1200">
-      <canvas class="logo-deeltjes" id="logo-deeltjes" aria-hidden="true"></canvas>
       <div class="kamer">
         <p class="kicker fade-rise--klein" style="--i:0">Wijchen · twee salons</p>
-        <p class="scene-kop hero-kop fade-rise--groot" style="--i:1">Een goede kapper<br>in Wijchen.</p>
-        <p class="subkop fade-rise" style="--i:2">Met en zonder afspraak — <span class="nowrap">je bent welkom.</span></p>
+        <video class="logo-intro fade-only" style="--i:1" data-scrub="0"
+               muted playsinline preload="auto" poster="assets/logo-intro-poster.jpg"
+               src="assets/logo-intro.mp4" aria-label="Kapsalon Milano"></video>
+        <p class="scene-kop hero-kop fade-rise" style="--i:2">Een goede kapper in Wijchen.</p>
+        <p class="subkop fade-rise" style="--i:3">Met en zonder afspraak — <span class="nowrap">je bent welkom.</span></p>
       </div>
       <p class="hint fade-rise--klein" style="--i:3">Scroll — de rode lijn neemt <span class="nowrap">je mee <span class="pijl"></span></span></p>
       <div class="fx fx-grain"></div>
@@ -697,12 +688,11 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
   var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
   var N = scenes.length;                       // 6
   var stips = Array.prototype.slice.call(document.querySelectorAll('#stipjes button'));
-  var band = document.getElementById('decor-band'); // trage parallax-laag
 
-  /* decor-video's die met de scroll scrubben (de filmrol draait
-     alleen als jij scrollt) */
+  /* decor- en logo-video's die met de scroll scrubben (de filmrol
+     draait alleen als jij scrollt) */
   var scrubVideos = [];
-  document.querySelectorAll('.decor-video').forEach(function(v){
+  document.querySelectorAll('.decor-video, .logo-intro').forEach(function(v){
     var item = { el:v, scene:parseInt(v.dataset.scrub,10), duur:0 };
     v.addEventListener('loadedmetadata', function(){
       item.duur = v.duration || 0;
@@ -726,128 +716,32 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
   var huidige = 0;          // scène waar de camera nu op rust/heen gaat
   var animatie = false;     // true zolang wij zelf de scroll sturen
 
-  /* ── BLOK 06: logo-deeltjes-overgang (scène 1 → 2) ──────────────────
-        Het echte logo lost bij het scrollen op in snippers (knip-metafoor);
-        terugscrollen zet het exact terug. Pure functie van de scroll —
-        geen timers. Zie platform/lib/blokken/06-logo-deeltjes-overgang.html */
-  window.LOGODEELTJES = (function(){
-    'use strict';
-    var deeltjes = [], cv, ctx, imgEl, W, H, klaar = false, laatsteP = -1;
-    var off, offX = 0, offY = 0, cel = 3;
-    function mulberry32(zaad){ return function(){
-      zaad |= 0; zaad = zaad + 0x6D2B79F5 | 0;
-      var t = Math.imul(zaad ^ zaad >>> 15, 1 | zaad);
-      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };}
-    var laatsteScrub = 0;
-    function init(opties){
-      if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      imgEl = opties.img; cv = opties.canvas;
-      if (!imgEl || !cv || !cv.getContext) return;
-      var maakDeeltjes = function(){
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
-        var rect = cv.getBoundingClientRect();
-        W = Math.round(rect.width * dpr); H = Math.round(rect.height * dpr);
-        cv.width = W; cv.height = H;
-        ctx = cv.getContext('2d');
-        var ir = imgEl.getBoundingClientRect();
-        var ox = (ir.left - rect.left) * dpr, oy = (ir.top - rect.top) * dpr;
-        var iw = Math.max(1, Math.round(ir.width * dpr)), ih = Math.max(1, Math.round(ir.height * dpr));
-        off = document.createElement('canvas'); off.width = iw; off.height = ih;
-        offX = ox; offY = oy;
-        var octx = off.getContext('2d');
-        try { octx.drawImage(imgEl, 0, 0, iw, ih); } catch(e){ return; }
-        var data; try { data = octx.getImageData(0, 0, iw, ih).data; } catch(e){ return; }
-        var budget = (window.innerWidth < 700) ? 1600 : 3600;
-        var stap = Math.max(2, Math.round(Math.sqrt((iw * ih) / budget)));
-        cel = stap;
-        deeltjes = [];
-        var i = 0;
-        for (var y = 0; y < ih; y += stap){
-          for (var x = 0; x < iw; x += stap){
-            var k = (y * iw + x) * 4;
-            if (data[k + 3] < 40) continue;
-            var rnd = mulberry32(i * 7919 + 17);
-            deeltjes.push({
-              x: ox + x, y: oy + y,
-              kleur: 'rgba(' + data[k] + ',' + data[k+1] + ',' + data[k+2] + ',',
-              r: (0.9 + rnd() * 1.4) * dpr * (stap / 2.5),
-              drempel: 0.42 * (1 - y / ih) + rnd() * 0.30,
-              vx: (rnd() * 2 - 1) * 0.55 + 0.35,
-              vy: -(0.5 + rnd() * 0.9),
-              slinger: rnd() * Math.PI * 2,
-              freq: 2.2 + rnd() * 3.4
-            });
-            i++;
-          }
-        }
-        klaar = deeltjes.length > 0;
-        laatsteP = -1;
-        scrub(Math.max(0, laatsteScrub));
-      };
-      if (imgEl.complete && imgEl.naturalWidth) maakDeeltjes();
-      else imgEl.addEventListener('load', maakDeeltjes, { once: true });
-      var wachter; window.addEventListener('resize', function(){
-        clearTimeout(wachter); wachter = setTimeout(maakDeeltjes, 180);
-      });
-    }
-    function scrub(p){
-      laatsteScrub = p;
-      if (!klaar) return;
-      p = Math.min(Math.max(p, 0), 1);
-      if (Math.abs(p - laatsteP) < 0.0015) return;
-      laatsteP = p;
-      if (p <= 0.03){
-        imgEl.style.opacity = '';
-        ctx.clearRect(0, 0, W, H);
-        return;
-      }
-      imgEl.style.opacity = '0';
-      ctx.clearRect(0, 0, W, H);
-      if (off) ctx.drawImage(off, offX, offY);
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      var afstand = Math.max(W, H) * 0.42;
-      var los = [];
-      for (var i = 0; i < deeltjes.length; i++){
-        var d = deeltjes[i];
-        var q = (p - d.drempel) / Math.max(1 - d.drempel, 0.001);
-        if (q <= 0) continue;
-        q = Math.min(q, 1);
-        ctx.clearRect(d.x - 0.5, d.y - 0.5, cel + 1, cel + 1);
-        los.push([d, q]);
-      }
-      for (var j = 0; j < los.length; j++){
-        var dd = los[j][0], qq = los[j][1];
-        var e = qq * qq * (3 - 2 * qq);
-        var zwier = Math.sin(dd.slinger + e * dd.freq) * 26 * dpr * e;
-        var px = dd.x + dd.vx * e * afstand + zwier;
-        var py = dd.y + dd.vy * e * afstand * 0.9 + Math.cos(dd.slinger + e * dd.freq * 0.7) * 12 * dpr * e;
-        var a = Math.max(1 - qq * 1.15, 0);
-        if (a <= 0.01) continue;
-        ctx.fillStyle = dd.kleur + a.toFixed(3) + ')';
-        ctx.fillRect(px, py, dd.r * (1 - qq * 0.4), dd.r * (1 - qq * 0.4));
-      }
-    }
-    return { init: init, scrub: scrub };
-  })();
-  LOGODEELTJES.init({
-    img: document.querySelector('#s1 .logo-hoek'),
-    canvas: document.getElementById('logo-deeltjes')
-  });
-
   function bijwerken(progress){
-    var g = progress * (N - 1);                // 0..5 langs de strook
-    /* logo lost op in snippers terwijl scène 1 het toneel overdraagt */
-    if (window.LOGODEELTJES) LOGODEELTJES.scrub(Math.min(Math.max((g - 0.08) / 0.5, 0), 1));
+    var g = progress * (N - 1);                // 0..5 langs de reis
     for (var i = 0; i < N; i++) if (g > i - 0.5) onthul(i);
     var actief = Math.round(g);
     if (!animatie) huidige = actief;
     stips.forEach(function(b, i){ b.classList.toggle('actief', i === actief); });
-    /* het doorlopende decor reist op ±45% tegen-tempo → netto trager */
-    if (band) {
-      var X = progress * (N - 1) * window.innerWidth;
-      band.style.transform = 'translate3d(' + (X * 0.45) + 'px,0,0)';
+    /* ── VERTICALE scène-wissel (Jay-regel: nooit zijwaarts) ──
+       vertrekkende scène stijgt zacht en vervaagt; de nieuwe
+       komt van onder omhoog. Pure functie van g → exact omkeerbaar. */
+    for (var j = 0; j < N; j++){
+      var a = g - j;                           // 0 = deze scène in rust
+      var sc = scenes[j];
+      if (a <= -1 || a >= 1){
+        sc.style.visibility = 'hidden'; sc.style.opacity = '0'; continue;
+      }
+      sc.style.visibility = 'visible';
+      if (a >= 0){                             /* vertrekt naar boven */
+        sc.style.opacity = String(Math.max(1 - a * 1.5, 0));
+        sc.style.transform = 'translate3d(0,' + (-a * 12).toFixed(2) + 'vh,0)';
+        sc.style.zIndex = '5';
+      } else {                                 /* komt van onder binnen */
+        var tIn = 1 + a;                       // 0..1
+        sc.style.opacity = String(Math.min(tIn * 1.5, 1));
+        sc.style.transform = 'translate3d(0,' + ((1 - tIn) * 14).toFixed(2) + 'vh,0)';
+        sc.style.zIndex = '6';
+      }
     }
     /* de rode lijn tekent scrubbend door ALLE scènes mee */
     if (lijn) lijn.style.transform = 'scaleX(' + Math.min(Math.max(g / (N - 1), 0), 1) + ')';
@@ -864,30 +758,24 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
     });
   }
 
-  var tween = gsap.to(strook, {
-    /* expliciet (N-1)×viewport: de absolute decor-band mag de
-       strook-breedte nooit beïnvloeden */
-    x: function(){ return -((N - 1) * window.innerWidth); },
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '#toneel',
-      start: 'top top',
-      /* ruimere scroll-lengte: ± één schermhoogte per scène-wissel */
-      end: function(){ return '+=' + Math.round((N - 1) * window.innerHeight * 1.1); },
-      pin: true,
-      scrub: 1,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: function(self){ bijwerken(self.progress); },
-      onRefresh: function(self){ bijwerken(self.progress); },
-      onToggle: function(self){
-        if (!kijker) return;
-        if (self.isActive) { kijker.enable(); }
-        else { kijker.disable(); }
-      }
+  /* géén x-tween meer: scènes bewegen verticaal via bijwerken().
+     De ScrollTrigger pint het toneel en levert alleen de voortgang. */
+  st = ScrollTrigger.create({
+    trigger: '#toneel',
+    start: 'top top',
+    /* ruimere scroll-lengte: ± één schermhoogte per scène-wissel */
+    end: function(){ return '+=' + Math.round((N - 1) * window.innerHeight * 1.1); },
+    pin: true,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
+    onUpdate: function(self){ bijwerken(self.progress); },
+    onRefresh: function(self){ bijwerken(self.progress); },
+    onToggle: function(self){
+      if (!kijker) return;
+      if (self.isActive) { kijker.enable(); }
+      else { kijker.disable(); }
     }
   });
-  st = tween.scrollTrigger;
 
   /* ── snap-discipline: één wheel/swipe-burst = maximaal één scène.
         We vangen wheel/touch zelf af zolang het toneel gepind staat

@@ -289,6 +289,21 @@ const regelVan = (index) => html.slice(0, index).split('\n').length;
   }
 }
 
+// ============================================================
+// CHECK 9 — Scènes bewegen NOOIT zijwaarts (Jay-regel, definitief,
+// 3× bevestigd op 2026-07-03). Signatuur van een horizontale
+// filmstrook: een x-tween op schermbreedte, of een flex-strook
+// van meerdere viewports breed.
+// ============================================================
+{
+  if (/[{,\s]x\s*:[^,}\n]*innerWidth/.test(html)) {
+    fouten.push('Zijwaartse scène-beweging gevonden (x-tween op schermbreedte) — scènes wisselen ALTIJD verticaal binnen het vaste kader, nooit naar links/rechts.');
+  }
+  if (/width\s*:\s*max-content[^}]*}\s*/.test(html) && /flex\s*:\s*0\s+0\s+100vw/.test(html)) {
+    fouten.push('Horizontale filmstrook-CSS gevonden (flex-strook van 100vw-scènes) — scènes wisselen ALTIJD verticaal, nooit zijwaarts.');
+  }
+}
+
 // ---------- Uitkomst ----------
 const resultaat = {
   pass: fouten.length === 0,
