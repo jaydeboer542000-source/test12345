@@ -23,13 +23,12 @@ body{background:#e9e9e9}
 
 /* het plakkende beeld: blijft staan terwijl jij de film scrubt */
 #header-plak{position:sticky;top:0;height:100svh;overflow:hidden}
+/* de video passend en iets verkleind — niet opgeblazen tot schermvulling;
+   de pagina-achtergrond loopt in dezelfde grijstint door */
+#header-plak{background:radial-gradient(circle at 50% 45%, #f4f4f4, #dedede)}
 #header-plak video{position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;pointer-events:none;
-  background:radial-gradient(circle at 50% 45%, #f6f6f6, #dcdcdc)}
-/* staand scherm: liggende video passend tonen, nooit hard bijsnijden */
-@media (max-aspect-ratio: 1/1){
-  #header-plak video{object-fit:contain}
-}
+  object-fit:contain;transform:scale(.86);transform-origin:center;
+  pointer-events:none}
 
 /* wie geen beweging wil: gewoon het stilstaande logo-beeld */
 @media (prefers-reduced-motion: reduce){
@@ -65,25 +64,25 @@ body{background:#e9e9e9}
   });
   try { video.load(); } catch(e){}
 
-  /* scrollpositie → videotijd. Pure functie: zelfde plek = zelfde beeld,
-     dus terugscrollen spoelt exact terug. Geen timers, geen autoplay. */
-  var doelTijd = 0, bezig = false;
+  /* scrollpositie → videotijd, met een zachte naloop (lerp): wielstapjes
+     vloeien in elkaar over in plaats van te verspringen. Zelfde scrollplek
+     blijft hetzelfde beeld, dus terugscrollen spoelt exact terug. */
+  var doelTijd = 0, huidigeTijd = 0, loopt = false;
   function tik(){
     if (!duur) return;
     var maxScroll = ruimte.offsetHeight - window.innerHeight;
     if (maxScroll <= 0) return;
     var p = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
     doelTijd = p * Math.max(duur - 0.05, 0);
-    if (!bezig) zet();
+    if (!loopt) { loopt = true; requestAnimationFrame(zet); }
   }
   function zet(){
-    if (Math.abs(video.currentTime - doelTijd) > 0.02) {
-      bezig = true;
-      try { video.currentTime = doelTijd; } catch(e){}
-      requestAnimationFrame(zet);
-    } else {
-      bezig = false;
-    }
+    /* elke tik een stukje dichter naar het doel: soepel, nooit schokkerig */
+    huidigeTijd += (doelTijd - huidigeTijd) * 0.16;
+    if (Math.abs(doelTijd - huidigeTijd) < 0.008) huidigeTijd = doelTijd;
+    try { video.currentTime = huidigeTijd; } catch(e){}
+    if (Math.abs(doelTijd - huidigeTijd) > 0.004) requestAnimationFrame(zet);
+    else loopt = false;
   }
   window.addEventListener('scroll', tik, { passive: true });
   window.addEventListener('resize', tik);
