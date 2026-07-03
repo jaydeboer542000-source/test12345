@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blok 06 — Logo-deeltjes-overgang (scroll-scrub)</title>
+<!--
+════════════════════════════════════════════════════════════════════
+BLOK 06 — LOGO-DEELTJES-OVERGANG
+════════════════════════════════════════════════════════════════════
+WAT: het echte logo van de klant lost bij het scrollen op in deeltjes
+     (haarsnippers-metafoor bij een kapper) — dé cinematische overgang
+     van scène 1 naar scène 2. Terugscrollen zet de deeltjes exact
+     terug: alles is een pure functie van de scroll-positie (scrub),
+     er lopen géén klokken of timers.
+
+WAAROM CODE EN GEEN AI-VIDEO: een mp4 van het logo vervormt de
+     merkletters (AI hallucineert merktekst — geleerde les), is wazig
+     op grote schermen en heeft een ingebakken achtergrond. Dit blok
+     sampelt de ECHTE pixels van het echte logo-bestand: pixelscherp,
+     juiste kleuren, werkt op elke achtergrond.
+
+GEBRUIK (contract, zelfde stijl als blok 01):
+  1. Zet een <canvas class="logo-deeltjes"> over/naast het logo-<img>.
+  2. LOGODEELTJES.init({ img, canvas })  → sampelt het logo één keer.
+  3. Roep in je scène-callback LOGODEELTJES.scrub(p) aan met p = 0..1
+     (0 = logo gaaf, 1 = volledig weggewaaid). Koppel p aan de
+     scène-overgang, bv. p = clamp((g - 0.15) / 0.7, 0, 1).
+  4. Bij p ≤ 0.03 blijft het echte <img> zichtbaar (maximaal scherp);
+     daarna neemt de canvas het over. Het blok regelt dat zelf.
+
+TERUGVAL: prefers-reduced-motion of geen canvas → niets initialiseren;
+     het logo blijft gewoon staan en de bestaande crossfade doet het werk.
+
+DETERMINISTISCH: geen Math.random tijdens het tekenen — elke deeltjes-
+     baan komt uit een geseede generator (zelfde scroll = zelfde beeld,
+     vooruit én achteruit).
+════════════════════════════════════════════════════════════════════
+-->
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,'Helvetica Neue',sans-serif;background:#F4F1EC;color:#1c1c1c}
+  /* demo-toneel: 1 schermhoogte gepind, scrollen scrubt de overgang */
+  #ruimte{height:300svh}
+  #stage{position:sticky;top:0;height:100svh;display:grid;place-items:center;overflow:hidden}
+  .logo-vlak{position:relative;width:min(64vw,680px)}
+  .logo-vlak img{width:100%;height:auto;display:block}
+  canvas.logo-deeltjes{position:absolute;inset:-40% -30%;width:160%;height:180%;pointer-events:none}
+  .volgende{position:absolute;inset:0;display:grid;place-items:center;opacity:0;background:#17191a;color:#F4F1EC}
+  .volgende h2{font-weight:400;font-size:clamp(1.6rem,4vw,3rem);margin:0}
+  .uitleg{position:fixed;left:14px;bottom:12px;font-size:12px;color:#777}
+  @media (prefers-reduced-motion: reduce){ #ruimte{height:auto} .volgende{display:none} }
+</style>
+</head>
+<body>
+<div id="ruimte">
+  <div id="stage">
+    <div class="volgende" id="volgende"><h2>…en hier begint scène 2.</h2></div>
+    <div class="logo-vlak" id="logo-vlak">
+      <img id="logo" src="../../clients/milano/assets/logo-vrij.png" alt="Demo-logo">
+      <canvas class="logo-deeltjes" id="canvas" aria-hidden="true"></canvas>
+    </div>
+  </div>
+</div>
+<p class="uitleg">Scroll: het logo waait uiteen in deeltjes — terugscrollen zet het exact terug. (demo van blok 06)</p>
+
+<script>
+/* ── DE MOTOR — kopieer dit blok 1:1 naar de klant-site ─────────────── */
+window.LOGODEELTJES = (function(){
+  'use strict';
+  var deeltjes = [], cv, ctx, imgEl, W, H, klaar = false, laatsteP = -1;
+  var off, offX = 0, offY = 0, cel = 3;   /* scherpe kopie van het logo + celmaat */
+
+  /* geseede generator: zelfde zaad = zelfde 'toeval', elke run opnieuw */
+  function mulberry32(zaad){ return function(){
+    zaad |= 0; zaad = zaad + 0x6D2B79F5 | 0;
+    var t = Math.imul(zaad ^ zaad >>> 15, 1 | zaad);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };}
+
+  function init(opties){
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    imgEl = opties.img; cv = opties.canvas;
+    if (!imgEl || !cv || !cv.getContext) return;
+    var maakDeeltjes = function(){
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var rect = cv.getBoundingClientRect();
+      W = Math.round(rect.width * dpr); H = Math.round(rect.height * dpr);
+      cv.width = W; cv.height = H;
+      ctx = cv.getContext('2d');
+
+      /* logo-positie BINNEN de canvas bepalen en pixels sampelen */
+      var ir = imgEl.getBoundingClientRect();
+      var ox = (ir.left - rect.left) * dpr, oy = (ir.top - rect.top) * dpr;
+      var iw = Math.max(1, Math.round(ir.width * dpr)), ih = Math.max(1, Math.round(ir.height * dpr));
+      off = document.createElement('canvas'); off.width = iw; off.height = ih;
+      offX = ox; offY = oy;
+      var octx = off.getContext('2d');
+      try { octx.drawImage(imgEl, 0, 0, iw, ih); } catch(e){ return; }
+      var data; try { data = octx.getImageData(0, 0, iw, ih).data; } catch(e){ return; }
+
+      /* stapgrootte kiezen zodat we rond het budget blijven (scherp maar licht) */
+      var budget = (window.innerWidth < 700) ? 2200 : 5200;
+      var stap = Math.max(2, Math.round(Math.sqrt((iw * ih) / budget)));
+      cel = stap;
+      deeltjes = [];
+      var i = 0;
+      for (var y = 0; y < ih; y += stap){
+        for (var x = 0; x < iw; x += stap){
+          var k = (y * iw + x) * 4;
+          if (data[k + 3] < 40) continue;              /* doorzichtig = geen deeltje */
+          var rnd = mulberry32(i * 7919 + 17);
+          deeltjes.push({
+            x: ox + x, y: oy + y,
+            kleur: 'rgba(' + data[k] + ',' + data[k+1] + ',' + data[k+2] + ',',
+            r: (0.9 + rnd() * 1.4) * dpr * (stap / 2.5),
+            /* wanneer dit deeltje loslaat (onderin eerst: knipsels vallen omhoog weg) */
+            drempel: 0.42 * (1 - y / ih) + rnd() * 0.30,
+            vx: (rnd() * 2 - 1) * 0.55 + 0.25,          /* lichte wind mee naar rechts */
+            vy: -(0.5 + rnd() * 0.9),                    /* omhoog wegwaaien */
+            slinger: rnd() * Math.PI * 2,
+            freq: 2.2 + rnd() * 3.4
+          });
+          i++;
+        }
+      }
+      klaar = deeltjes.length > 0;
+      laatsteP = -1;
+      scrub(Math.max(0, laatsteScrub));
+    };
+    if (imgEl.complete && imgEl.naturalWidth) maakDeeltjes();
+    else imgEl.addEventListener('load', maakDeeltjes, { once: true });
+    var wachter; window.addEventListener('resize', function(){
+      clearTimeout(wachter); wachter = setTimeout(maakDeeltjes, 180);
+    });
+  }
+
+  var laatsteScrub = 0;
+  function scrub(p){
+    laatsteScrub = p;
+    if (!klaar) return;
+    p = Math.min(Math.max(p, 0), 1);
+    if (Math.abs(p - laatsteP) < 0.0015) return;       /* niets veranderd → niet tekenen */
+    laatsteP = p;
+
+    /* tot 3%: het echte plaatje is scherper dan welk deeltje ook */
+    if (p <= 0.03){
+      imgEl.style.opacity = '';
+      ctx.clearRect(0, 0, W, H);
+      return;
+    }
+    imgEl.style.opacity = '0';
+    ctx.clearRect(0, 0, W, H);
+    /* het vaste deel = het ECHTE logo (pixelscherp); we gummen alleen de
+       cellen weg die al losgewaaid zijn en tekenen die als vliegend deeltje */
+    if (off) ctx.drawImage(off, offX, offY);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var afstand = Math.max(W, H) * 0.42;
+
+    /* pas 1: alle losgelaten cellen uit het scherpe logo gummen */
+    var los = [];
+    for (var i = 0; i < deeltjes.length; i++){
+      var d = deeltjes[i];
+      var q = (p - d.drempel) / Math.max(1 - d.drempel, 0.001);
+      if (q <= 0) continue;                             /* zit nog vast in het scherpe logo */
+      q = Math.min(q, 1);
+      ctx.clearRect(d.x - 0.5, d.y - 0.5, cel + 1, cel + 1);
+      los.push([d, q]);
+    }
+    /* pas 2: de losgelaten deeltjes als vliegende snippers tekenen */
+    for (var j = 0; j < los.length; j++){
+      var dd = los[j][0], qq = los[j][1];
+      var e = qq * qq * (3 - 2 * qq);                   /* smoothstep: rustig, filmisch */
+      var zwier = Math.sin(dd.slinger + e * dd.freq) * 26 * dpr * e;
+      var px = dd.x + dd.vx * e * afstand + zwier;
+      var py = dd.y + dd.vy * e * afstand * 0.9 + Math.cos(dd.slinger + e * dd.freq * 0.7) * 12 * dpr * e;
+      var a = Math.max(1 - qq * 1.15, 0);
+      if (a <= 0.01) continue;
+      ctx.fillStyle = dd.kleur + a.toFixed(3) + ')';
+      ctx.fillRect(px, py, dd.r * (1 - qq * 0.4), dd.r * (1 - qq * 0.4));
+    }
+  }
+
+  return { init: init, scrub: scrub };
+})();
+
+/* ── demo-aansturing (alleen voor dit losse blok; in de klant-site
+      roept de scène-motor LOGODEELTJES.scrub(p) aan) ─────────────── */
+(function(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  LOGODEELTJES.init({ img: document.getElementById('logo'), canvas: document.getElementById('canvas') });
+  var volgende = document.getElementById('volgende');
+  function tik(){
+    var ruimte = document.getElementById('ruimte');
+    var maxScroll = ruimte.offsetHeight - window.innerHeight;
+    var p = maxScroll > 0 ? Math.min(Math.max(window.scrollY / maxScroll, 0), 1) : 0;
+    /* eerst rust (0–15%), dan de overgang (15–85%), dan scène 2 (85–100%) */
+    var overgang = Math.min(Math.max((p - 0.15) / 0.7, 0), 1);
+    LOGODEELTJES.scrub(overgang);
+    volgende.style.opacity = Math.min(Math.max((p - 0.62) / 0.3, 0), 1);
+  }
+  window.addEventListener('scroll', tik, { passive: true });
+  tik();
+})();
+</script>
+</body>
+</html>
