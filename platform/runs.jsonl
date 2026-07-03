@@ -1,0 +1,11 @@
+{"ts":"2026-07-02T12:21:26.237Z","slug":"kapsalon-milano-zuiderpoort","action":"mail","ok":true,"duration_ms":60377,"cost_usd":0.9008420000000001,"tokens":19640}
+{"ts":"2026-07-02T13:21:30.268Z","slug":"house-of-brothers","action":"build","ok":true,"duration_ms":982005,"cost_usd":7.892885999999999,"tokens":34115}
+{"ts":"2026-07-02T14:54:33.123Z","slug":"milano","action":"build","ok":true,"duration_ms":625667,"cost_usd":5.459521499999999,"tokens":29983}
+{"ts":"2026-07-02T15:24:19.453Z","slug":"milano","action":"mail","ok":true,"duration_ms":76085,"cost_usd":1.148447,"tokens":20524}
+{"ts":"2026-07-02T15:24:53.366Z","slug":"milano","action":"mail","ok":true,"duration_ms":91964,"cost_usd":1.226886,"tokens":21338}
+{"ts":"2026-07-02T15:27:36.356Z","slug":"milano","action":"qc","ok":true,"duration_ms":280841,"cost_usd":3.4729159999999997,"tokens":31999}
+{"ts":"2026-07-03T08:21:51.654Z","slug":"milano","action":"build","ok":true,"duration_ms":1146067,"cost_usd":20.933906,"tokens":3324}
+{"ts":"2026-07-03T13:11:27.052Z","slug":"duo-4-you-hairstyling-kapsalon-wijchen","action":"build","ok":true,"duration_ms":40005,"cost_usd":0.786589,"tokens":17242}
+{"ts":"2026-07-03T13:12:46.142Z","slug":"duo-4-you-hairstyling-kapsalon-wijchen","action":"build","ok":true,"duration_ms":236601,"cost_usd":2.57783,"tokens":21904}
+{"ts":"2026-07-03T13:22:07.007Z","slug":"duo-4-you-hairstyling-kapsalon-wijchen","action":"build","ok":true,"duration_ms":581751,"cost_usd":7.0493239999999995,"tokens":48306}
+{"ts":"2026-07-03T13:35:56.345Z","slug":"duo-4-you-hairstyling-kapsalon-wijchen","action":"build","ok":true,"duration_ms":1075036,"cost_usd":24.029792500000006,"tokens":84474}

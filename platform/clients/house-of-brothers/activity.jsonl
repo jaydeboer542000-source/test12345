@@ -1,0 +1,5 @@
+{"ts":"2026-07-01T15:23:20.589Z","stage":"sourced","msg":"lead gevonden via Places (kapper in Wijchen) — score 59","ok":true}
+{"ts":"2026-07-02T15:30:00.000Z","stage":"available","msg":"site.html gebouwd (cinematic demo, alleen echte data); visuele QC geblokkeerd door ontbrekende exec-permissies — qc.pass blijft false","ok":false}
+{"ts":"2026-07-02T13:21:30.268Z","msg":"actie \"build\" (982s, $7.893)","ok":true}
+{"ts": "2026-07-02T15:26:10.753760", "stage": "demo_built", "msg": "site gebouwd + QC geslaagd (desktop+mobiel, console schoon)", "ok": true}
+{"ts": "2026-07-02T16:30:42.648292", "stage": "available", "msg": "demo weggegooid (was zonder commando gebouwd)", "ok": true}

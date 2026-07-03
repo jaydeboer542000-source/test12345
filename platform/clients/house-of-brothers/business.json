@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "slug": "house-of-brothers",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "House of brothers💈",
+    "category": "barber shop",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "House of brothers💈",
+      "address": "Markt 23, 6602 AN Wijchen, Netherlands",
+      "phone": "024 675 6533"
+    }
+  ],
+  "contact": {
+    "website": "http://www.houseofbrothers.nl/"
+  },
+  "site_structure": {
+    "homepage": "http://www.houseofbrothers.nl/",
+    "type": "unknown (needs-confirm)",
+    "nav": [],
+    "pages": [],
+    "notes": "NOT CRAWLED — site-mapper run on 2026-07-02 could not reach the live site: every network command (curl/wget/python/node/playwright) was denied by the permission system in that session. Nothing here is verified; do NOT rebuild from this. Re-run site-mapper with network access (or Playwright MCP) before the cinematic-designer starts.",
+    "status": "crawl-blocked, needs-confirm"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.9,
+      "count": 79
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

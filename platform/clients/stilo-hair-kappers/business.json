@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "stilo-hair-kappers",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "STiLO Hair Kappers ✂",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "STiLO Hair Kappers ✂",
+      "address": "Saltshof 3513, 6604 GW Wijchen, Netherlands",
+      "phone": "06 22061088"
+    }
+  ],
+  "contact": {
+    "website": "https://www.afspraakpro.nl/stilohair"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.9,
+      "count": 66
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "slug": "duo-4-you-hairstyling-kapsalon-wijchen",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "Duo 4 you hairstyling - Kapsalon Wijchen",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "Duo 4 you hairstyling - Kapsalon Wijchen",
+      "address": "Holenbergseweg 16, 6604 AK Wijchen, Netherlands",
+      "phone": "024 645 5110"
+    }
+  ],
+  "contact": {
+    "website": "http://www.duo4you-hairstyling.nl/"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.9,
+      "count": 70
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ],
+  "photos": {
+    "approved": [
+      "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_0.jpg",
+      "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg",
+      "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg",
+      "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_4.jpg",
+      "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg"
+    ],
+    "mode": "photos",
+    "note": "alleen deze foto's gebruiken; leeg + mode no-photos = sfeer-route (géén nep-interieurs)",
+    "decided_by": "Jay",
+    "decided": "2026-07-03"
+  }
+}

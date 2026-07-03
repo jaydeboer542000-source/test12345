@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "diana-s-hairstyling",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "Diana's Hairstyling ✂",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "Diana's Hairstyling ✂",
+      "address": "Lepelaarstraat 10, 6601 DJ Wijchen, Netherlands",
+      "phone": "024 641 3510"
+    }
+  ],
+  "contact": {
+    "website": "http://www.dianashairstyling.nl/"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.9,
+      "count": 46
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Duo 4 You hairstyling — Kapsalon in Wijchen</title>
+<meta name="description" content="Duo 4 You hairstyling, kapsalon aan de Holenbergseweg 16 in Wijchen. Door klanten beoordeeld met 4,9 uit 70 Google-reviews. Bel 024 645 5110 voor een afspraak.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" fetchpriority="high" href="assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg">
+<style>
+/* ── DRAAIKNOPPEN — merk uit de echte foto's (logo op raam/deur/uithangbord) ── */
+:root{
+  --kleur-accent:#2FA5AC;          /* teal van het geschilderde logo          */
+  --kleur-accent-donker:#22878D;
+  --kleur-accent-licht:#7AD4DA;    /* teal voor tekst op donker               */
+  --kleur-toneel:#14191A;          /* inkt-donker toneel                      */
+  --kleur-wit:#F4F3EF;             /* gebroken wit                            */
+  --kleur-stil:#B9BDB8;            /* stille tekst op donker (salie-ondertoon)*/
+  --kleur-inkt:#22282A;
+  --kleur-grijs:#68706E;
+  --font-display:'DM Serif Display',serif;
+  --font-text:'DM Sans',sans-serif;
+  --ease-huis:cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{margin:0;background:var(--kleur-toneel);color:var(--kleur-wit);
+  font-family:var(--font-text);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+
+/* ── typografie-recepten (A2: DM Serif Display + DM Sans) ─────────────── */
+.display{font-family:var(--font-display);font-weight:400;
+  font-size:clamp(3rem,11vw,8.5rem);line-height:1.0;letter-spacing:-0.01em;margin:0}
+.display em,.scene-kop em{font-style:italic;font-weight:400}
+.scene-kop{font-family:var(--font-display);font-weight:400;
+  font-size:clamp(2rem,5vw,3.5rem);line-height:1.08;margin:0}
+.body-tekst{font-size:clamp(1rem,1.1vw,1.125rem);line-height:1.65;max-width:62ch;
+  margin:1.25rem auto 0;color:var(--kleur-stil)}
+.kicker{font-size:.75rem;text-transform:uppercase;letter-spacing:.22em;
+  font-weight:500;font-variant-numeric:tabular-nums;opacity:.85; /* .65 uit het recept is te licht op foto-achtergrond — leesbaarheid wint */
+  color:var(--kleur-accent-licht);margin:0 0 1rem}
+
+/* ── het toneel (blok 01) ─────────────────────────────────────────────── */
+#stage-wrap{height:500svh}
+#stage{position:relative;height:100svh;overflow:hidden;background:var(--kleur-toneel)}
+
+.scene{position:absolute;inset:0;z-index:10;opacity:0;pointer-events:none;
+  will-change:opacity,transform;
+  display:grid;place-items:center;text-align:center;padding:clamp(24px,5vw,64px)}
+.scene.is-active{pointer-events:auto}
+.scene[data-scene="1"]{opacity:1}
+.scene-inhoud{position:relative;z-index:2;max-width:880px}
+
+/* echte foto als decor: full-bleed achter de inhoud, onder een inkt-waas */
+.decor-foto{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.decor-foto img{width:100%;height:100%;object-fit:cover;opacity:.58;display:block;
+  will-change:transform}
+.decor-foto::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,
+    rgba(16,21,22,.92) 0%, rgba(16,21,22,.60) 45%, rgba(16,21,22,.40) 100%)}
+.scene[data-scene="1"] .decor-foto img{object-position:center 42%}
+.scene[data-scene="2"] .decor-foto img{object-position:center 55%}
+.scene[data-scene="3"] .decor-foto img{opacity:.38}
+.scene[data-scene="4"] .decor-foto img{opacity:.48}
+
+/* scène 1 — entree */
+/* .34em spacing is een bewuste echo van het raam-logo ("h a i r s t y l i n g"
+   staat daar óók breed gespatieerd) — geen sjabloonkeuze */
+.merk-sub{font-size:.9rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--kleur-stil);margin:1.1rem 0 0;font-weight:500}
+/* de verteller: alleen het woord 'jou' in italic — zelfde gebaar als de koppen */
+.verteller{font-family:var(--font-display);font-style:normal;
+  font-size:clamp(1.4rem,2.6vw,2rem);color:var(--kleur-accent-licht);margin:2.2rem 0 0}
+.verteller em{font-style:italic}
+.scroll-hint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);
+  z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--kleur-stil)}
+.scroll-hint::after{content:"";width:1px;height:44px;
+  background:linear-gradient(to bottom,var(--kleur-accent-licht),transparent);
+  animation:hint-adem 2.6s var(--ease-huis) infinite}
+@keyframes hint-adem{0%,100%{opacity:.25;transform:scaleY(.6);transform-origin:top}
+  50%{opacity:1;transform:scaleY(1)}}
+
+/* scène 3 — bewijs (blok 04) */
+.rs-onder{position:relative;display:inline-block}
+.rs-lijn{position:absolute;left:0;bottom:-6px;width:100%;height:14px;overflow:visible}
+.rs-lijn path{fill:none;stroke:var(--kleur-accent);stroke-width:3;
+  stroke-linecap:round;stroke-dasharray:230;stroke-dashoffset:230}
+.rs-cijfer{font-family:var(--font-display);line-height:1;display:block;
+  font-size:clamp(4rem,9vw,6.5rem);margin-top:2.4rem}
+.rs-cijfer .ster{color:var(--kleur-accent-licht);font-size:.5em;
+  vertical-align:.45em;margin-right:.12em}
+.rs-stemmen{display:block;margin-top:.9rem;font-size:.78rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--kleur-stil);font-weight:500}
+.rs-bron{font-size:13px;color:var(--kleur-stil);opacity:.8;margin:2rem 0 0}
+
+/* scène 4 — afspraak */
+.afspraak-adres{margin:1.5rem 0 0;color:var(--kleur-stil);font-size:clamp(1rem,1.3vw,1.15rem)}
+.bel-knop{display:inline-block;margin-top:2rem;background:var(--kleur-accent);
+  color:#fff;text-decoration:none;font-weight:500;font-size:clamp(1.05rem,1.4vw,1.25rem);
+  padding:16px 34px;border-radius:999px;
+  box-shadow:0 8px 32px rgba(47,165,172,.28);
+  transition:background .6s var(--ease-huis),transform .6s var(--ease-huis)}
+.bel-knop:hover{background:var(--kleur-accent-donker);transform:translateY(-2px)}
+
+/* ── voortgangsstipjes ────────────────────────────────────────────────── */
+#dots{position:fixed;right:8px;top:50%;transform:translateY(-50%);z-index:50;
+  display:flex;flex-direction:column;gap:2px}
+#dots button{appearance:none;border:0;background:transparent;
+  width:40px;height:40px;padding:0;display:grid;place-items:center;cursor:pointer}
+#dots button::before{content:"";width:8px;height:8px;border-radius:50%;
+  background:rgba(122,212,218,.30);
+  transition:transform .7s var(--ease-huis),background .7s var(--ease-huis)}
+#dots button.actief::before{background:var(--kleur-accent-licht);transform:scale(1.4)}
+
+/* ── sfeer-vellen (grain-licht) ───────────────────────────────────────── */
+.fx-scene{position:relative;isolation:isolate}
+.fx{position:absolute;inset:0;pointer-events:none;user-select:none;z-index:20}
+.fx-grain{opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:240px 240px}
+.fx-vignette{z-index:15;background:radial-gradient(130% 130% at 50% 45%,
+  rgba(0,0,0,0) 55%, rgba(0,0,0,.10) 80%, rgba(0,0,0,.22) 100%)}
+@media (prefers-contrast: more){.fx{display:none}}
+/* korrel is de duurste laag per scrub-frame — op mobiel uit (frame-budget) */
+@media (max-width:640px){.fx-grain{display:none}}
+
+/* ── zwevende bel-CTA (blok 02, één route: bellen) ────────────────────── */
+#afspraak{position:fixed;right:24px;bottom:24px;z-index:50}
+#afspraak-fab{display:inline-block;background:var(--kleur-accent);color:#fff;
+  font-family:var(--font-text);font-weight:500;font-size:16px;text-decoration:none;
+  padding:14px 26px;border-radius:999px;
+  box-shadow:0 6px 24px rgba(47,165,172,.30);
+  transition:background .6s var(--ease-huis),transform .6s var(--ease-huis)}
+#afspraak-fab:hover{background:var(--kleur-accent-donker);transform:translateY(-1px)}
+#mobiel-balk{display:none}
+@media (max-width:640px){
+  #afspraak{display:none}
+  #mobiel-balk{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:var(--kleur-accent-donker);padding-bottom:env(safe-area-inset-bottom)}
+  #mobiel-balk a{flex:1;height:52px;display:grid;place-items:center;
+    background:var(--kleur-accent);color:#fff;
+    text-decoration:none;font-weight:500;font-size:15px}
+  #mobiel-balk a:active{background:var(--kleur-accent-donker)}
+}
+
+/* ── footer (blok 05) ─────────────────────────────────────────────────── */
+#site-footer{position:relative;z-index:2;background:#101516;color:var(--kleur-stil);
+  border-top:1px solid rgba(122,212,218,.14);
+  padding:clamp(48px,7vw,88px) clamp(20px,6vw,72px) 40px}
+#site-footer a{color:var(--kleur-accent-licht);text-decoration:none}
+#site-footer a:hover{color:#fff}
+.footer-kop h2{font-family:var(--font-display);font-weight:400;
+  font-size:clamp(26px,3vw,36px);margin:0 0 4px;color:var(--kleur-wit)}
+.footer-kop p{margin:0 0 36px}
+/* het verteller-gebaar ook in de footer in de display-italic (DM Sans heeft geen echte italic) */
+.footer-kop p em{font-family:var(--font-display);font-style:italic;color:var(--kleur-accent-licht)}
+.footer-vestiging .adres{margin:0 0 8px;font-weight:500;color:var(--kleur-wit)}
+.footer-vestiging p{margin:0 0 12px}
+.footer-knop{display:inline-block;background:var(--kleur-accent);color:#fff !important;
+  font-weight:500;padding:11px 20px;border-radius:999px;font-size:15px}
+.footer-knop:hover{background:var(--kleur-accent-donker)}
+.footer-demo{margin:40px 0 0;font-size:13px;opacity:.7}
+@media (max-width:640px){
+  #site-footer{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+}
+
+/* ── mobiel ───────────────────────────────────────────────────────────── */
+@media (max-width:640px){
+  #dots{right:2px;gap:0}
+  /* lucht voor de stipjes rechts; links gelijk zodat de tekst gecentreerd blijft */
+  .scene{padding-left:44px;padding-right:44px;
+    padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+  .decor-foto img{opacity:.5}
+  .scroll-hint{bottom:calc(64px + env(safe-area-inset-bottom))}
+}
+
+/* ── statische route: reduced-motion of geen GSAP ─────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  #stage-wrap{height:auto}
+  #stage{height:auto;overflow:visible}
+  .scene{position:relative;inset:auto;opacity:1;pointer-events:auto;min-height:100svh;
+    padding-top:96px;padding-bottom:96px}
+  #dots{display:none}
+  .scroll-hint::after{animation:none;opacity:.6}
+  .rs-lijn path{stroke-dashoffset:0 !important}
+  .fade-el{opacity:1 !important;transform:none !important}
+}
+.statisch #stage-wrap{height:auto}
+.statisch #stage{height:auto;overflow:visible}
+.statisch .scene{position:relative;inset:auto;opacity:1 !important;transform:none !important;
+  pointer-events:auto;min-height:100svh;padding-top:96px;padding-bottom:96px}
+.statisch #dots{display:none}
+.statisch .fade-el{opacity:1 !important;transform:none !important}
+.statisch .rs-lijn path{stroke-dashoffset:0 !important}
+/* ook op de statische/reduced-motion-route blijft de mobiele balk vrij */
+@media (max-width:640px){
+  .statisch .scene{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+}
+@media (max-width:640px) and (prefers-reduced-motion: reduce){
+  .scene{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+}
+
+/* elementen die de toneel-machine onthult, staan klaar (verstopt) */
+.fade-el{opacity:0}
+</style>
+<noscript><style>
+/* geen JS → volwaardige statische pagina, niets blijft verstopt */
+#stage-wrap{height:auto}
+#stage{height:auto;overflow:visible}
+.scene{position:relative;inset:auto;opacity:1;pointer-events:auto;
+  min-height:100svh;padding-top:96px;padding-bottom:96px}
+#dots{display:none}
+.fade-el{opacity:1}
+.rs-lijn path{stroke-dashoffset:0}
+</style></noscript>
+</head>
+<body>
+
+<div id="stage-wrap">
+  <div id="stage" class="fx-scene">
+
+    <!-- SCÈNE 1 — ENTREE: de merknaam boven de echte gevel -->
+    <section class="scene is-active" data-scene="1" aria-label="Entree">
+      <div class="decor-foto" aria-hidden="true">
+        <img src="assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg" alt="" fetchpriority="high">
+      </div>
+      <div class="scene-inhoud">
+        <p class="kicker fade-el">01 · Kapsalon in Wijchen</p>
+        <h1 class="display fade-el">Duo 4 <em>You</em></h1>
+        <p class="merk-sub fade-el">hairstyling</p>
+        <p class="verteller fade-el">Voor <em>jou</em>.</p>
+      </div>
+      <div class="scroll-hint fade-el" aria-hidden="true">Scroll</div>
+    </section>
+
+    <!-- SCÈNE 2 — BELOFTE: de echte salon -->
+    <section class="scene" data-scene="2" aria-label="De salon">
+      <div class="decor-foto" aria-hidden="true">
+        <img src="assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg" alt="" loading="lazy">
+      </div>
+      <div class="scene-inhoud">
+        <p class="kicker fade-el">02 · De salon</p>
+        <h2 class="scene-kop fade-el">Voor <em>jou</em> nemen we de tijd.</h2>
+        <p class="body-tekst fade-el">Even zitten, op adem komen en de deur uit
+          met haar dat klopt. Geen lopende band — gewoon aandacht en vakwerk.</p>
+      </div>
+    </section>
+
+    <!-- SCÈNE 3 — BEWIJS: de echte Google-score (blok 04) -->
+    <section class="scene" data-scene="3" aria-label="Reviews">
+      <div class="decor-foto" aria-hidden="true">
+        <img src="assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg" alt="" loading="lazy">
+      </div>
+      <div class="scene-inhoud">
+        <p class="kicker fade-el">03 · Wat klanten zeggen</p>
+        <h2 class="scene-kop fade-el">Voor <em>jou</em> al
+          <span class="rs-onder">70 keer<svg class="rs-lijn" viewBox="0 0 220 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 9 C 60 13, 160 3, 216 8"/></svg></span>
+          beoordeeld.</h2>
+        <p class="fade-el" data-score="1" style="margin:0">
+          <span class="rs-cijfer"><span class="ster">★</span>4,9</span>
+          <span class="rs-stemmen">Google-reviews</span>
+        </p>
+        <p class="rs-bron fade-el">Bron: Google-reviews, juli 2026</p>
+      </div>
+    </section>
+
+    <!-- SCÈNE 4 — DE AFSPRAAK -->
+    <section class="scene" data-scene="4" aria-label="Afspraak maken">
+      <div class="decor-foto" aria-hidden="true">
+        <img src="assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_4.jpg" alt="" loading="lazy">
+      </div>
+      <div class="scene-inhoud">
+        <p class="kicker fade-el">04 · De afspraak</p>
+        <h2 class="scene-kop fade-el">Voor <em>jou</em> een stoel vrij.</h2>
+        <p class="afspraak-adres fade-el">Holenbergseweg 16 · Wijchen</p>
+        <a class="bel-knop fade-el" href="tel:+31246455110">Bel 024&nbsp;645&nbsp;5110</a>
+      </div>
+    </section>
+
+    <div class="fx fx-vignette" aria-hidden="true"></div>
+    <div class="fx fx-grain" aria-hidden="true"></div>
+  </div>
+</div>
+
+<!-- stipjes worden door de machine gevuld -->
+<nav id="dots" aria-label="Onderdelen van de pagina"></nav>
+
+<!-- FOOTER — alle praktische info woont hier (blok 05) -->
+<footer id="site-footer">
+  <div class="footer-kop">
+    <h2>Duo 4 You hairstyling</h2>
+    <p>Kapsalon in Wijchen — voor <em>jou</em>.</p>
+  </div>
+  <div class="footer-vestiging">
+    <p class="adres">Holenbergseweg 16, 6604 AK Wijchen</p>
+    <p><a href="tel:+31246455110">024 645 5110</a></p>
+  </div>
+  <p class="footer-demo">Demo-ontwerp — gemaakt op basis van openbare gegevens
+    (Google, juli 2026). Foto's: openbare foto's van de salon.
+    Openingstijden en prijslijst volgen na bevestiging door de salon.</p>
+</footer>
+
+<!-- CTA-lagen (blok 02): bellen = de route, zichtbaar vanaf de eerste paint -->
+<div id="afspraak">
+  <a id="afspraak-fab" href="tel:+31246455110">Bel voor een afspraak</a>
+</div>
+<div id="mobiel-balk">
+  <a href="tel:+31246455110">Bel voor een afspraak</a>
+</div>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ── TONEEL-MACHINE (blok 01) ─────────────────────────────────────────────
+   Roept window.SCENES[n](progress, gsap) aan; progress = 0..1 binnen scène n.
+   Alles deterministisch (gsap.set) zodat terug-scrollen ook klopt.        */
+(function () {
+  'use strict';
+  window.SCENES = window.SCENES || {};
+
+  window.frac = function (p, a, b) {
+    var t = (p - a) / (b - a);
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    return 1 - (1 - t) * (1 - t);
+  };
+  window.comp = function (p) { return p < 0.6 ? p / 0.6 : 1; };
+  window.fadeUp = function (gsap, el, p, a, b) {
+    if (!el) return;
+    var t = window.frac(p, a, b);
+    gsap.set(el, { opacity: t, y: 20 * (1 - t) });
+  };
+
+  var reduceer = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function init() {
+    var scenesEls = Array.prototype.slice.call(document.querySelectorAll('#stage .scene'));
+    var N = scenesEls.length;
+    var wrap = document.getElementById('stage-wrap');
+    var dotsNav = document.getElementById('dots');
+
+    scenesEls.forEach(function (sc, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', sc.getAttribute('aria-label') || ('Onderdeel ' + (i + 1)));
+      if (i === 0) b.classList.add('actief');
+      dotsNav.appendChild(b);
+    });
+    var dots = Array.prototype.slice.call(dotsNav.querySelectorAll('button'));
+
+    /* geen GSAP of reduced-motion? → statische nette pagina */
+    if (reduceer.matches || !window.gsap || !window.ScrollTrigger) {
+      document.documentElement.classList.add('statisch');
+      scenesEls.forEach(function (sc) { sc.classList.add('is-active'); });
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* padlengte van de onderstreping exact meten (contract motion-tokens) */
+    var rsPad = document.querySelector('.rs-lijn path');
+    if (rsPad) {
+      window.RS_LEN = rsPad.getTotalLength();
+      rsPad.style.strokeDasharray = window.RS_LEN;
+      rsPad.style.strokeDashoffset = window.RS_LEN;
+    }
+
+    wrap.style.height = ((N + 1) * 100) + 'svh';
+
+    var tl = gsap.timeline({ defaults: { ease: 'power1.inOut' } });
+    tl.set({ _pad: 0 }, { _pad: 0 }, N);
+
+    /* scroll-gedreven tijden: dit zijn SCROLL-fracties (scrub), geen klok-ms */
+    var WISSEL = 0.15, VOL = 1;
+
+    scenesEls.forEach(function (sc, idx) {
+      var i = idx + 1;
+      if (i > 1) {
+        tl.to(scenesEls[idx - 1], { opacity: 0, y: -18, duration: WISSEL }, i - 1);
+        tl.fromTo(sc, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: WISSEL }, i - 1);
+      }
+      if (typeof window.SCENES[i] === 'function') {
+        var proxy = { p: 0 };
+        tl.to(proxy, {
+          p: 1, duration: VOL, ease: 'none',
+          onUpdate: function () { window.SCENES[i](proxy.p, gsap); }
+        }, i - 1);
+      }
+    });
+
+    if (typeof window.SCENES[1] === 'function') window.SCENES[1](0, gsap);
+
+    function zetActief(idx) {
+      scenesEls.forEach(function (sc, k) { sc.classList.toggle('is-active', k === idx); });
+      dots.forEach(function (d, k) { d.classList.toggle('actief', k === idx); });
+    }
+    zetActief(0);
+
+    var snapPunten = [0];
+    for (var i = 1; i <= N; i++) snapPunten.push((i - 0.3) / N);
+    snapPunten.push(1);
+
+    var st = ScrollTrigger.create({
+      trigger: '#stage-wrap',
+      start: 'top top',
+      end: '+=' + (N * 100) + '%',
+      pin: '#stage',
+      scrub: 0.8,
+      anticipatePin: 1,
+      animation: tl,
+      snap: {
+        snapTo: snapPunten,
+        directional: false,
+        inertia: false,
+        duration: { min: 0.6, max: 0.9 },
+        ease: 'power2.inOut',
+        delay: 0.15
+      },
+      onUpdate: function (self) {
+        var idx = Math.max(0, Math.min(N - 1, Math.floor(self.progress * N)));
+        zetActief(idx);
+      },
+      onLeave: function ()   { gsap.to('#dots', { autoAlpha: 0, duration: 0.6, overwrite: 'auto' }); },
+      onEnterBack: function(){ gsap.to('#dots', { autoAlpha: 1, duration: 0.6, overwrite: 'auto' }); }
+    });
+
+    dots.forEach(function (d, idx) {
+      d.addEventListener('click', function () {
+        var y = st.start + (st.end - st.start) * ((idx + 0.7) / N);
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+    });
+
+    window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+    /* alleen verversen als de BREEDTE wijzigt — de iOS-adresbalk vuurt
+       hoogte-resizes en die mogen geen sprong veroorzaken (svh vangt ze op) */
+    var rTimer, lastW = window.innerWidth;
+    window.addEventListener('resize', function () {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
+      clearTimeout(rTimer);
+      rTimer = setTimeout(function () { ScrollTrigger.refresh(); }, 150);
+    }, { passive: true });
+
+    window.TONEEL = { tl: tl, st: st, N: N };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+
+/* ── SCÈNE-CHOREOGRAFIE — alles klaar op p=0.6 (comp), snap-proof ──────── */
+
+/* Scène 1 — entree: speelt direct bij load (p=0) via een kleine intro */
+window.SCENES[1] = function (p, gsap) {
+  var sc = document.querySelector('[data-scene="1"]');
+  if (!sc) return;
+  if (!sc.dataset.intro) {
+    sc.dataset.intro = '1';
+    var els = [
+      sc.querySelector('.kicker'),
+      sc.querySelector('.display'),
+      sc.querySelector('.merk-sub'),
+      sc.querySelector('.verteller'),
+      sc.querySelector('.scroll-hint')
+    ];
+    els.forEach(function (el, i) {
+      if (!el) return;
+      gsap.fromTo(el, { opacity: 0, y: 24 }, {
+        opacity: 1, y: 0, duration: 1.2,
+        ease: 'expo.out', delay: 0.12 * i + 0.1
+      });
+    });
+  }
+  /* de gevel zoomt heel licht mee met de scroll (fysiek, ≤ subtiel) */
+  var img = sc.querySelector('.decor-foto img');
+  if (img) gsap.set(img, { scale: 1 + 0.05 * p, transformOrigin: '50% 40%' });
+};
+
+/* Scène 2 — belofte */
+window.SCENES[2] = function (p, gsap) {
+  var sc = document.querySelector('[data-scene="2"]');
+  if (!sc) return;
+  p = comp(p);
+  fadeUp(gsap, sc.querySelector('.kicker'),    p, 0.05, 0.22);
+  fadeUp(gsap, sc.querySelector('.scene-kop'), p, 0.18, 0.42);
+  fadeUp(gsap, sc.querySelector('.body-tekst'),p, 0.40, 0.62);
+  var img = sc.querySelector('.decor-foto img');
+  if (img) gsap.set(img, { scale: 1.06 - 0.05 * p, transformOrigin: '50% 55%' });
+};
+
+/* Scène 3 — bewijs: score exact, lijn tekent zichzelf (enige lijn-gebaar) */
+window.SCENES[3] = function (p, gsap) {
+  var sc = document.querySelector('[data-scene="3"]');
+  if (!sc) return;
+  p = comp(p);
+  fadeUp(gsap, sc.querySelector('.kicker'),    p, 0.05, 0.20);
+  fadeUp(gsap, sc.querySelector('.scene-kop'), p, 0.14, 0.36);
+  var lijn = sc.querySelector('.rs-lijn path');
+  var L = window.RS_LEN || 230;
+  if (lijn) gsap.set(lijn, { strokeDashoffset: L * (1 - frac(p, 0.34, 0.62)) });
+  fadeUp(gsap, sc.querySelector('[data-score="1"]'), p, 0.48, 0.72);
+  gsap.set(sc.querySelector('.rs-bron'), { opacity: frac(p, 0.72, 0.86) });
+};
+
+/* Scène 4 — de afspraak */
+window.SCENES[4] = function (p, gsap) {
+  var sc = document.querySelector('[data-scene="4"]');
+  if (!sc) return;
+  p = comp(p);
+  fadeUp(gsap, sc.querySelector('.kicker'),        p, 0.05, 0.22);
+  fadeUp(gsap, sc.querySelector('.scene-kop'),     p, 0.18, 0.42);
+  fadeUp(gsap, sc.querySelector('.afspraak-adres'),p, 0.40, 0.58);
+  fadeUp(gsap, sc.querySelector('.bel-knop'),      p, 0.52, 0.72);
+};
+</script>
+</body>
+</html>

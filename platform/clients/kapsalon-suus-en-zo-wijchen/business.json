@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "kapsalon-suus-en-zo-wijchen",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "Kapsalon Suus en Zo Wijchen",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "Kapsalon Suus en Zo Wijchen",
+      "address": "Acaciastraat 36A, 6602 EN Wijchen, Netherlands",
+      "phone": "024 303 1113"
+    }
+  ],
+  "contact": {
+    "website": "http://www.kapsalonsuusenzo.nl/"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.7,
+      "count": 48
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

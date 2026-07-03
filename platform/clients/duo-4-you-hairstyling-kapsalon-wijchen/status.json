@@ -1,0 +1,67 @@
+{
+  "stage": "available",
+  "flags": {
+    "building": false
+  },
+  "lead": {
+    "success_probability": 58,
+    "band": "amber",
+    "budget": 0.56,
+    "need": 0.6,
+    "reach": 1,
+    "top_positive": [
+      "70 reviews",
+      "heeft site (verouderbaar)"
+    ],
+    "top_blocker": "site vervangen"
+  },
+  "jury": {
+    "type": "CODE-ONLY, voorlopig — geen screenshots mogelijk (exec geblokkeerd), dus per ANKER.md nog GEEN geldige eind-jury",
+    "ronde1": {
+      "concept": 7.5,
+      "typografie": 8,
+      "motion": 8,
+      "eerlijkheid_data": 9,
+      "mobiel": 7.5
+    },
+    "ronde2_na_fixes": {
+      "concept": 8,
+      "typografie": 9,
+      "motion": 8.5,
+      "eerlijkheid_data": 9.5,
+      "mobiel": 8.5
+    },
+    "alle_topfixes_toegepast": true,
+    "vereist_nog": "screenshot-jury (desktop + 390px) + live ANKER-vergelijking zodra exec-permissie er is"
+  },
+  "qc": {
+    "pass": false,
+    "notes": [
+      "site.html v2: v1 gefixt na 2 code-juryrondes, alle 5 lenzen >=8 (code-only, voorlopig)",
+      "craft-lint: node geblokkeerd, maar alle 6 checks handmatig nagelopen — 1 harde fout gevonden en gefixt (5 font-families in stacks, nu exact 2); rest schoon",
+      "BLOKKADE: geen exec-permissie in deze sessie (node/chrome/qc-client.sh/open geweigerd, ook via subagents) — geen echte screenshots, dus pass blijft false (fail-closed)",
+      "NODIG voor de gate: sessie mét exec-permissie → node platform/lib/craft-lint.mjs, bash platform/qc-client.sh duo-4-you-hairstyling-kapsalon-wijchen, screenshot-jury desktop + 390px",
+      "data 100% traceerbaar naar business.json; alleen door Jay goedgekeurde foto's; demo-notitie aanwezig",
+      "needs-confirm: openingstijden (deurfoto onleesbaar), diensten, prijzen, boekingswidget, e-mail + 2 sfeerbeloftes (zie concept.json bevestigen_door_salon)"
+    ]
+  },
+  "updated": "2026-07-03T15:09:47.671Z",
+  "gate": {
+    "pass": false,
+    "checks": {
+      "site": true,
+      "lint": false,
+      "jury": false,
+      "qc": false
+    },
+    "redenen": [
+      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg\" zit in een decor-laag (regel 228) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
+      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg\" zit in een decor-laag (regel 242) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
+      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg\" zit in een decor-laag (regel 255) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
+      "lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_4.jpg\" zit in een decor-laag (regel 273) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).",
+      "jury: geen eind-scores gevonden (jury-lus niet afgemaakt)",
+      "qc: pass is niet true (echte screenshot-QC ontbreekt of faalde)"
+    ],
+    "ts": "2026-07-03T15:09:47.671Z"
+  }
+}

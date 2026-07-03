@@ -1,0 +1,170 @@
+/* ============================================================
+   MOTION-TOKENS.CSS — het beweging-woordenboek van de wow-machine
+   ------------------------------------------------------------
+   Dit bestand is de WET voor alle beweging op elke klant-site.
+   Laad het in, gebruik ALLEEN deze variabelen en classes.
+   Zelf easing of duur verzinnen = verboden.
+   Lees motion-tokens.md voor wanneer je wat gebruikt.
+
+   Kern-gevoel: snel op gang, heel lang zacht uitrollen.
+   Als een zware theatergordijn: hij begint meteen te bewegen,
+   maar het laatste stukje duurt het langst. Dat voelt duur.
+   ============================================================ */
+
+:root {
+  /* ---- DE HUIS-EASING (er is er maar één) ----------------
+     Snelle start, lange zachte staart (expo-achtig uit).
+     Alles wat beweegt gebruikt deze. Geen uitzonderingen. */
+  --ease-huis: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Alleen voor dingen die WEGgaan (uitfaden, scene verlaat
+     het toneel). Rustig erin, rustig eruit. */
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* ---- DE 3 TOEGESTANE DUREN ------------------------------
+     Korter dan 600ms bestaat niet in dit huis.
+     kort  = kleine dingen (een lijntje, een dot, een knopje)
+     basis = de standaard voor tekst en foto-reveals
+     lang  = grote momenten (hero, scene-wissel, decor)     */
+  --dur-kort:  700ms;
+  --dur-basis: 900ms;
+  --dur-lang:  1200ms;
+
+  /* ---- STAGGER (om-de-beurt) ------------------------------
+     Als meerdere dingen verschijnen: NOOIT tegelijk.
+     Elk volgend element wacht één stap langer.
+     krap  = woorden/regels binnen één zin
+     basis = losse elementen in één scene (kop, tekst, knop)
+     ruim  = grote blokken (kaarten, prijzen)              */
+  --stagger-krap:  80ms;
+  --stagger-basis: 120ms;
+  --stagger-ruim:  180ms;
+
+  /* ---- AFSTAND ---------------------------------------------
+     Beweging is klein en fysiek. Max 40px verplaatsing.   */
+  --rise-klein: 16px;   /* subtiel, voor kleine tekst      */
+  --rise-basis: 28px;   /* standaard reveal                */
+  --rise-groot: 40px;   /* hero / groot moment — het MAX   */
+}
+
+/* ============================================================
+   UTILITY-CLASSES
+   ------------------------------------------------------------
+   Werkwijze (2 stappen, meer niet):
+   1. Zet de class op het element → het staat "klaar" (verstopt).
+   2. Voeg .is-visible toe (via IntersectionObserver of GSAP)
+      → het speelt precies één keer af.
+
+   Stagger: zet op het element ook style="--i: 0" / "--i: 1" /
+   "--i: 2" enz. Elk nummer wacht één stagger-stap langer.
+   ============================================================ */
+
+/* ---- .fade-rise ---------------------------------------------
+   Het brood-en-boter van het huis: zachtjes omhoog + infaden.
+   Voor: koppen, alinea's, knoppen, kaarten.                  */
+.fade-rise {
+  opacity: 0;
+  transform: translateY(var(--rise-basis));
+  transition:
+    opacity   var(--dur-basis) var(--ease-huis),
+    transform var(--dur-basis) var(--ease-huis);
+  transition-delay: calc(var(--i, 0) * var(--stagger-basis));
+  will-change: opacity, transform;
+}
+.fade-rise.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Varianten: zelfde beweging, andere maat/tempo. */
+.fade-rise--klein { transform: translateY(var(--rise-klein)); transition-duration: var(--dur-kort), var(--dur-kort); }
+.fade-rise--groot { transform: translateY(var(--rise-groot)); transition-duration: var(--dur-lang), var(--dur-lang); }
+.fade-rise--klein.is-visible,
+.fade-rise--groot.is-visible { transform: translateY(0); }
+
+/* ---- .clip-reveal -------------------------------------------
+   Element wordt "opengeschoven" alsof een gordijn omhoog gaat.
+   Voor: foto's, decor-beelden, grote hero-koppen.
+   (De inhoud zelf schuift niet — alleen het venster opent.)  */
+.clip-reveal {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path var(--dur-lang) var(--ease-huis);
+  transition-delay: calc(var(--i, 0) * var(--stagger-ruim));
+  will-change: clip-path;
+}
+.clip-reveal.is-visible {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Variant: opent van links naar rechts (voor brede beelden). */
+.clip-reveal--links {
+  clip-path: inset(0 100% 0 0);
+}
+.clip-reveal--links.is-visible {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ---- .draw-line ---------------------------------------------
+   Een dun lijntje dat zichzelf tekent. Het ENIGE grafische
+   gebaar per scene (zie AGENTS.md: max één klein gebaar).
+   Gebruik als los element, bv. <span class="draw-line"></span>
+   onder een kop. Nooit DOOR tekst heen.                      */
+.draw-line {
+  display: block;
+  height: 1px;                 /* dun = duur */
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-lang) var(--ease-huis);
+  transition-delay: calc(var(--i, 0) * var(--stagger-basis));
+  will-change: transform;
+}
+.draw-line.is-visible {
+  transform: scaleX(1);
+}
+
+/* Voor SVG-paden (bv. één elegante boog in scene 1):
+   zet class op het <path>, en zet in JS eerst
+   stroke-dasharray/-offset op de padlengte.                  */
+.draw-line--svg {
+  transition: stroke-dashoffset var(--dur-lang) var(--ease-huis);
+  will-change: stroke-dashoffset;
+}
+.draw-line--svg.is-visible {
+  stroke-dashoffset: 0;
+}
+
+/* ---- .fade-only ---------------------------------------------
+   Puur infaden, geen verplaatsing. Voor decor/achtergronden
+   en scene-crossfades (achtergrond mag nooit "springen").   */
+.fade-only {
+  opacity: 0;
+  transition: opacity var(--dur-lang) var(--ease-huis);
+  transition-delay: calc(var(--i, 0) * var(--stagger-basis));
+  will-change: opacity;
+}
+.fade-only.is-visible {
+  opacity: 1;
+}
+
+/* ============================================================
+   TOEGANKELIJKHEID — verplicht, niet weghalen.
+   Als de bezoeker "minder beweging" heeft aangezet, verschijnt
+   alles gewoon meteen. Geen animatie > geen misselijkheid.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .fade-rise,
+  .fade-rise--klein,
+  .fade-rise--groot,
+  .clip-reveal,
+  .clip-reveal--links,
+  .draw-line,
+  .draw-line--svg,
+  .fade-only {
+    transition: none;
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}

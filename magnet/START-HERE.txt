@@ -1,0 +1,42 @@
+THE FLOATING-PRODUCT SECTION  —  start here
+=================================================
+
+You got the cinematic web section from the demo. It's yours to keep.
+No code knowledge needed — you only edit one plain-text file.
+
+
+HOW TO USE IT (about 2 minutes)
+---------------------------------
+
+1. Unzip this folder and double-click  index.html  to watch it move.
+
+2. Open  config.js  in any text editor. This is the ONLY file you change.
+   (engine.css and engine.js are "the machine" — never touch those.)
+
+3. Edit these plain-text lines:
+     - title    : your headline
+     - sub      : your one-line tagline
+     - kicker   : the small label on top
+     - glow     : the glow color behind your product (a hex code like "#4db6ff")
+     - brand    : your brand name (top-left), or leave "" to hide it
+
+4. Add your own product:
+     - Take a photo of your product with the background removed (a transparent PNG).
+       (See placeholder_product.png in this folder for what that looks like.)
+     - Drop your PNG into this same folder.
+     - In config.js, set  product: "your-file-name.png"
+
+5. Paste the section into your own site.
+   The mobile version is already built in — it just works.
+
+
+THAT'S IT.
+If you build something with it, send it my way — I'd love to see it.
+
+— Jay de Boer
+I make websites that move like a movie.
+Instagram: @jay.webdesign
+
+This is one section from a growing library I'm putting together —
+new cinematic sections added every month. I'll let you know when it opens.
+The section above is yours to keep either way.

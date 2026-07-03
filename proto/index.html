@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Floating Product — carrousel</title>
+<!-- premium fonts: Fraunces (display-serif titel/merk) + Inter (kleine tekst) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..560&family=Inter:wght@500;600&display=swap" rel="stylesheet" />
+<!-- DE MACHINE (looks). Niet aanpassen per sectie. -->
+<link rel="stylesheet" href="engine.css" />
+</head>
+<body>
+  <!-- schil: de machine vult dit -->
+  <div class="carousel" id="carousel"><div class="track" id="track"></div></div>
+  <div class="scrim"></div>
+  <div class="brand" id="brand"></div>
+  <div class="arrow prev" id="prev">‹</div>
+  <div class="arrow next" id="next">›</div>
+  <div class="hint">Swipe / ← →</div>
+  <div class="dots" id="dots"></div>
+
+  <!-- HET KAARTJE (dit pas je aan), daarna DE MACHINE (motor) -->
+  <script src="config.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>

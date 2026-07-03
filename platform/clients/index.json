@@ -1,0 +1,121 @@
+{
+  "clients": [
+    {
+      "slug": "de-hoofdsalon",
+      "name": "De Hoofdsalon",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 53,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.587Z"
+    },
+    {
+      "slug": "diana-s-hairstyling",
+      "name": "Diana's Hairstyling ✂",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 54,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.591Z"
+    },
+    {
+      "slug": "duo-4-you-hairstyling-kapsalon-wijchen",
+      "name": "Duo 4 you hairstyling - Kapsalon Wijchen",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {
+        "building": false
+      },
+      "success_probability": 58,
+      "demo_url": "clients/duo-4-you-hairstyling-kapsalon-wijchen/site.html",
+      "gate": false,
+      "updated": "2026-07-03T15:09:47.671Z"
+    },
+    {
+      "slug": "house-of-brothers",
+      "name": "House of brothers💈",
+      "category": "barber shop",
+      "stage": "available",
+      "flags": {
+        "building": false
+      },
+      "success_probability": 59,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-02T16:30:42.648292"
+    },
+    {
+      "slug": "julie-tte-hairdressers-x-trendsetters",
+      "name": "Juliëtte Hairdressers x Trendsetters ✂",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 54,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.590Z"
+    },
+    {
+      "slug": "kapsalon-bijkris",
+      "name": "Kapsalon BijKris ✂",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 50,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.589Z"
+    },
+    {
+      "slug": "kapsalon-suus-en-zo-wijchen",
+      "name": "Kapsalon Suus en Zo Wijchen",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 52,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.588Z"
+    },
+    {
+      "slug": "kapsalon-wijchen-noord",
+      "name": "Kapsalon Wijchen Noord ✂",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 54,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.587Z"
+    },
+    {
+      "slug": "milano",
+      "name": "Kapsalon Milano",
+      "category": "Kapsalon",
+      "stage": "demo_built",
+      "flags": {
+        "building": false,
+        "needs_revision": false
+      },
+      "success_probability": 67,
+      "demo_url": "clients/milano/site.html",
+      "gate": false,
+      "updated": "2026-07-03T15:09:47.738Z"
+    },
+    {
+      "slug": "stilo-hair-kappers",
+      "name": "STiLO Hair Kappers ✂",
+      "category": "hair salon",
+      "stage": "available",
+      "flags": {},
+      "success_probability": 57,
+      "demo_url": null,
+      "gate": null,
+      "updated": "2026-07-01T15:23:20.590Z"
+    }
+  ]
+}

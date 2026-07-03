@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cinematic Section — demo</title>
+<style>
+  :root{
+    --paper:#f5f2ee;      /* warm off-white */
+    --ink:#1a1714;        /* near-black */
+    --accent:#a8895f;     /* soft gold — swap this for the brand color */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;-webkit-font-smoothing:antialiased}
+
+  .section{position:relative;height:600vh;background:#000}
+  .stage{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;background:#000}
+
+  /* ScrollyVideo mount + losse terugval-video vullen het scherm */
+  #scrolly, #fallbackVid{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+  /* !important overrulet ScrollyVideo's inline-styles (transform/min-width) zodat de video ALTIJD het hele scherm dekt, ook op grote vensters */
+  #scrolly video, #fallbackVid{position:absolute!important;inset:0!important;top:0!important;left:0!important;width:100%!important;height:100%!important;object-fit:cover!important;transform:none!important;min-width:0!important;min-height:0!important}
+  #fallbackVid{display:none;object-fit:cover}
+
+  .vignette{position:absolute;inset:0;pointer-events:none;z-index:3;
+    background:radial-gradient(ellipse 75% 75% at 50% 50%, transparent 35%, rgba(0,0,0,.45) 100%)}
+
+  .panel{position:absolute;bottom:14vh;max-width:340px;color:#f6f3f0;z-index:4;
+         opacity:0;transition:opacity .6s ease, transform .6s ease;transform:translateY(14px);pointer-events:none}
+  .panel.left{left:6vw}
+  .panel.right{right:6vw;text-align:right}
+  .panel.show{opacity:1;transform:translateY(0)}
+  .panel .chapter{font-family:system-ui,sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .panel h2{font-size:34px;font-weight:400;letter-spacing:.02em;line-height:1.1;margin-bottom:12px}
+  .panel p{font-family:system-ui,sans-serif;font-size:14px;font-weight:300;line-height:1.7;color:rgba(246,243,240,.7)}
+  .panel .price{display:inline-block;margin-top:16px;font-size:20px}
+
+  .hint{position:absolute;bottom:5vh;left:50%;transform:translateX(-50%);z-index:5;
+        font-family:system-ui,sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+        color:rgba(246,243,240,.65);transition:opacity .5s ease}
+  .hint .line{width:1px;height:38px;margin:0 auto 10px;background:linear-gradient(to bottom,transparent,var(--accent));
+              animation:pulse 2s ease-in-out infinite;transform-origin:top}
+  @keyframes pulse{0%{transform:scaleY(0)}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  .after{min-height:60vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:10vh 6vw}
+  .after h3{font-size:26px;font-weight:400;color:var(--ink);max-width:520px;line-height:1.4}
+
+  @media (max-width:768px){
+    .panel{left:5vw !important;right:5vw !important;max-width:none;bottom:16vh;text-align:left !important}
+    .panel h2{font-size:27px}
+    .panel p{font-size:13px}
+  }
+</style>
+</head>
+<body>
+
+  <section class="section" id="section">
+    <div class="stage">
+      <div id="scrolly"></div>
+      <!-- terugval: gewoon afspelen op zwakke telefoons / spaarstand -->
+      <video id="fallbackVid" muted playsinline loop preload="auto" poster="poster.jpg">
+        <source src="experience-m.mp4" type="video/mp4" />
+      </video>
+      <div class="vignette"></div>
+
+      <div class="panel left" data-from="0.04" data-to="0.17">
+        <div class="chapter">Chapter I</div>
+        <h2>Nuit Vellaré</h2>
+        <p>Amber · Oud · Tonka</p>
+        <span class="price">€145 · 50ml</span>
+      </div>
+
+      <div class="panel right" data-from="0.44" data-to="0.57">
+        <div class="chapter">The house</div>
+        <h2>Made by hand</h2>
+        <p>Poured and labelled in small batches in Antwerp.</p>
+      </div>
+
+      <div class="panel left" data-from="0.82" data-to="0.97">
+        <div class="chapter">Chapter II</div>
+        <h2>The collection</h2>
+        <p>Three scents · from €120</p>
+        <span class="price">Discover →</span>
+      </div>
+
+      <div class="hint" id="hint"><div class="line"></div>Scroll</div>
+    </div>
+  </section>
+
+  <section class="after">
+    <h3>Your normal website continues below — this is just the section.</h3>
+  </section>
+
+  <!-- ScrollyVideo.js — de scrub-motor (kiest zelf de beste methode per toestel) -->
+  <script src="https://cdn.jsdelivr.net/npm/scrolly-video@latest/dist/scrolly-video.js"></script>
+<script>
+(function(){
+  var section = document.getElementById('section');
+  var hint    = document.getElementById('hint');
+  var panels  = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+  var fallbackVid = document.getElementById('fallbackVid');
+
+  // panels + hint altijd op scroll (werkt ongeacht welke videomethode)
+  function updateOverlay(){
+    var rect = section.getBoundingClientRect();
+    var total = section.offsetHeight - window.innerHeight;
+    var p = Math.min(1, Math.max(0, (-rect.top) / total));
+    hint.style.opacity = p > 0.02 ? 0 : 1;
+    panels.forEach(function(el){
+      var from = parseFloat(el.dataset.from), to = parseFloat(el.dataset.to);
+      if (p >= from && p <= to) el.classList.add('show'); else el.classList.remove('show');
+    });
+    return p;
+  }
+
+  // === terugval: gewoon afspelen ===
+  function useFallback(){
+    document.getElementById('scrolly').style.display='none';
+    fallbackVid.style.display='block';
+    fallbackVid.play().catch(function(){});
+    window.addEventListener('scroll', updateOverlay, {passive:true});
+    updateOverlay();
+  }
+
+  // === ScrollyVideo proberen ===
+  var isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  function start(){
+    if (typeof ScrollyVideo === 'undefined'){ useFallback(); return; }
+    var sv;
+    try{
+      sv = new ScrollyVideo({
+        scrollyVideoContainer: 'scrolly',
+        src: 'experience-m.mp4',
+        trackScroll: false,   // wij sturen zelf
+        sticky: false,
+        full: false,
+        useWebCodecs: false,   // altijd lichte "video-sturen"-methode: werkt overal (WebCodecs-canvas bleef zwart op desktop)
+        transitionSpeed: 8,
+        frameThreshold: 0.1
+      });
+    }catch(e){ useFallback(); return; }
+
+    // iPhone: video "ontgrendelen" bij eerste aanraking (anders mag play() niet)
+    function prime(){
+      try{ if (sv && sv.video){ sv.video.muted=true; sv.video.play().catch(function(){}); } }catch(e){}
+    }
+    window.addEventListener('touchstart', prime, {once:true, passive:true});
+    window.addEventListener('click', prime, {once:true});
+
+    function onScroll(){
+      var p = updateOverlay();
+      try{ sv.setVideoPercentage(p); }catch(e){}
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  }
+
+  // wachten tot het CDN-script geladen is (max ~4s), anders terugval
+  var tries=0;
+  (function wait(){
+    if (typeof ScrollyVideo !== 'undefined'){ start(); return; }
+    if (tries++ > 40){ useFallback(); return; }
+    setTimeout(wait, 100);
+  })();
+})();
+</script>
+</body>
+</html>

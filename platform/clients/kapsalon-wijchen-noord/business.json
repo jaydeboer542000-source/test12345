@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "kapsalon-wijchen-noord",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "Kapsalon Wijchen Noord ✂",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "Kapsalon Wijchen Noord ✂",
+      "address": "Lepelaarstraat 2A, 6601 DJ Wijchen, Netherlands",
+      "phone": "024 663 7304"
+    }
+  ],
+  "contact": {
+    "website": null
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.7,
+      "count": 76
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

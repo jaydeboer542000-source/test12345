@@ -1,0 +1,131 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════
+BLOK 02 — MAAK-AFSPRAAK CTA (zwevende knop + mobiele sticky balk)
+Bewezen in: clients/milano/drafts/site-v15-toneel-jay.html
+
+WAT IS DIT?
+De conversie-route van de klant, ALTIJD in beeld:
+- Desktop: zwevende rode knop rechtsonder. Klik → klein keuzemenu
+  (bijv. twee vestigingen). Eén vestiging? Maak de knop dan direct
+  een <a> naar de boek-link en gooi het menu weg.
+- Mobiel (≤640px): de knop verdwijnt, onderin komt een sticky balk
+  met 1–2 grote tik-knoppen (veilige zone via safe-area-inset).
+
+KEIHARDE REGEL (AGENTS.md): de CTA is zichtbaar vanaf de EERSTE paint.
+Geen scroll-drempel, geen fade-in-na-3-seconden. Controleer dit op een
+VERSE load, desktop én 390px.
+
+ZO GEBRUIK JE HET:
+1. Kopieer de CSS + de twee HTML-stukken + het script naar je pagina.
+2. Vervang de VERVANG-MIJ links door de ECHTE boek-URL van de klant
+   (hun eigen widget: Salonized/Treatwell/Booksy/… — nooit een nep-formulier).
+3. Kleuren/fonts via de CSS-variabelen.
+4. Geef de pagina-inhoud op mobiel padding-bottom ≥ 88px zodat de balk
+   niets afdekt (blok 01 doet dit al voor .scene en de footer).
+═══════════════════════════════════════════════════════════════════════════
+-->
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blok 02 — Maak-afspraak CTA</title>
+<style>
+/* ── DRAAIKNOPPEN ────────────────────────────────────────────────────── */
+:root{
+  --kleur-accent:#D8222A;
+  --kleur-accent-donker:#C21F26;
+  --kleur-inkt:#1C1917;
+  --kleur-grijs:#6B6560;
+  --kleur-rand:color-mix(in srgb, var(--kleur-accent) 18%, transparent);
+  --font-text:-apple-system,'Helvetica Neue',sans-serif;
+  --ease-zacht:cubic-bezier(.4,0,.2,1);
+  --cta-tekst:#fff;             /* tekstkleur op de accent-knop           */
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--font-text)}
+
+/* ── zwevende knop + keuzemenu (desktop) — z 50, boven alles ─────────── */
+#afspraak{position:fixed;right:24px;bottom:24px;z-index:50;
+  display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#afspraak-fab{appearance:none;border:0;cursor:pointer;
+  background:var(--kleur-accent);color:var(--cta-tekst);
+  font-family:var(--font-text);font-weight:600;font-size:16px;
+  padding:14px 26px;border-radius:999px;
+  box-shadow:0 6px 24px color-mix(in srgb, var(--kleur-accent) 28%, transparent);
+  transition:background .3s var(--ease-zacht),transform .3s var(--ease-zacht)}
+#afspraak-fab:hover{background:var(--kleur-accent-donker);transform:translateY(-1px)}
+#afspraak-menu{background:#fff;border:1px solid var(--kleur-rand);
+  border-radius:14px;overflow:hidden;min-width:230px;
+  box-shadow:0 12px 40px rgba(28,25,23,.14)}
+#afspraak-menu a{display:block;padding:13px 18px;text-decoration:none;
+  color:var(--kleur-inkt);font-weight:600}
+#afspraak-menu a span{display:block;font-weight:400;font-size:13px;color:var(--kleur-grijs)}
+#afspraak-menu a:hover{background:color-mix(in srgb, var(--kleur-accent) 6%, transparent);
+  color:var(--kleur-accent-donker)}
+#afspraak-menu a+a{border-top:1px solid var(--kleur-rand)}
+
+/* ── mobiele sticky balk — z 60, óók boven de zwevende knop ──────────── */
+#mobiel-balk{display:none}
+@media (max-width:640px){
+  #afspraak{display:none}       /* op mobiel doet de balk het werk        */
+  #mobiel-balk{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;
+    gap:1px;background:var(--kleur-accent-donker);
+    padding-bottom:env(safe-area-inset-bottom)} /* niet achter de home-balk */
+  #mobiel-balk a{flex:1;height:52px;display:grid;place-items:center;
+    background:var(--kleur-accent);color:var(--cta-tekst);
+    text-decoration:none;font-weight:600;font-size:15px}
+  #mobiel-balk a:active{background:var(--kleur-accent-donker)}
+}
+
+/* alleen demo-vulling — weghalen bij gebruik */
+.demo{height:200vh;padding:40px;color:#6B6560}
+</style>
+</head>
+<body>
+
+<div class="demo">Demo-pagina — de CTA rechtsonder (desktop) / balk onderin (mobiel ≤640px) staat er vanaf de eerste paint. Scroll: hij blijft.</div>
+
+<!-- ── zwevende Maak-afspraak (desktop) ─────────────────────────────────
+     Twee-of-meer keuzes: laat het menu staan en vul echte links in.
+     Eén keuze: vervang de <button> door
+     <a id="afspraak-fab" href="ECHTE-BOEK-URL">Maak afspraak</a>
+     en verwijder #afspraak-menu + het script hieronder.               -->
+<div id="afspraak">
+  <div id="afspraak-menu" hidden>
+    <a href="#VERVANG-MIJ-boek-url-1">Keuze 1 <span>ondertitel, bijv. adres</span></a>
+    <a href="#VERVANG-MIJ-boek-url-2">Keuze 2 <span>ondertitel, bijv. adres</span></a>
+  </div>
+  <button id="afspraak-fab" type="button" aria-haspopup="true"
+          aria-expanded="false" aria-controls="afspraak-menu">Maak afspraak</button>
+</div>
+
+<!-- ── mobiele sticky balk (max 2 knoppen, korte labels) ──────────────── -->
+<div id="mobiel-balk">
+  <a href="#VERVANG-MIJ-boek-url-1">Afspraak keuze 1</a>
+  <a href="#VERVANG-MIJ-boek-url-2">Afspraak keuze 2</a>
+</div>
+
+<script>
+/* Menu open/dicht. Werkt zonder GSAP, dus ook op de statische route. */
+(function () {
+  'use strict';
+  var fab = document.getElementById('afspraak-fab');
+  var menu = document.getElementById('afspraak-menu');
+  if (!fab || !menu) return;
+  function zet(open) {
+    menu.hidden = !open;
+    fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  fab.addEventListener('click', function () { zet(menu.hidden); });
+  /* klik ernaast of Escape → menu dicht */
+  document.addEventListener('click', function (e) {
+    if (!menu.hidden && !e.target.closest('#afspraak')) zet(false);
+  }, { passive: true });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') zet(false);
+  });
+})();
+</script>
+</body>
+</html>

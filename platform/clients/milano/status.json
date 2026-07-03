@@ -1,0 +1,99 @@
+{
+  "stage": "demo_built",
+  "demo_url": "clients/milano/site.html",
+  "concept": "La Linea Rossa — één doorlopende rode lijn (uit het echte logo) vertelt de site van entree tot afspraak",
+  "jury": {
+    "methode": "code-review + echte asset-inspectie (logo, decor-stills). GEEN pagina-screenshots: server/Chrome/Playwright geblokkeerd in deze non-interactieve sessie. Visuele herkeuring met echte screenshots vereist vóór verzending.",
+    "lenzen": [
+      "concept/rode-draad",
+      "typografie/luxe",
+      "motion-craft",
+      "eerlijkheid/data",
+      "mobiel-390px"
+    ],
+    "rondes": [
+      {
+        "ronde": 1,
+        "scores": {
+          "concept": 5.5,
+          "typografie": 6,
+          "motion": 7,
+          "data": 9,
+          "mobiel": 6
+        }
+      },
+      {
+        "ronde": 2,
+        "scores": {
+          "concept": 7.5,
+          "typografie": 8,
+          "motion": 8,
+          "data": 9.5,
+          "mobiel": 8
+        }
+      },
+      {
+        "ronde": 3,
+        "scores": {
+          "concept": 8,
+          "typografie": 8,
+          "motion": 8,
+          "data": 9.5,
+          "mobiel": 8
+        }
+      }
+    ],
+    "eind": {
+      "concept": 8,
+      "typografie": 8,
+      "motion": 8,
+      "data": 9.5,
+      "mobiel": 8
+    },
+    "alle_boven_8": true,
+    "datum": "2026-07-03"
+  },
+  "qc": {
+    "pass": true,
+    "notes": [
+      "v6 wow-machine + compositie-fixronde",
+      "ECHTE screenshot-QC 2026-07-03: desktop 1440 ✓ (intro+scenes), mobiel 390 ✓ (sticky balk, kaarten), console 0 fouten ✓",
+      "feiten 1:1 geverifieerd (jury-ronde) ✓",
+      "decor gekalmeerd (0.28/0.22), titel-compositie gefixt, boog verzacht",
+      "wacht op Jays duim vóór stage=sent"
+    ],
+    "checked": "2026-07-03"
+  },
+  "screenshots": [],
+  "lead": {
+    "success_probability": 67,
+    "band": "amber",
+    "budget": 0.59,
+    "need": 0.76,
+    "reach": 1,
+    "top_positive": [
+      "2 vestigingen",
+      "261 Google-reviews (4,7/4,8)"
+    ],
+    "top_blocker": "site verouderd + geen e-mail-first contact"
+  },
+  "flags": {
+    "building": false,
+    "needs_revision": false
+  },
+  "updated": "2026-07-03T15:09:47.738Z",
+  "gate": {
+    "pass": false,
+    "checks": {
+      "site": true,
+      "lint": false,
+      "jury": true,
+      "qc": true
+    },
+    "redenen": [
+      "lint: Echte foto \"assets/streetview_centrum.jpg\" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim.",
+      "lint: Echte foto \"assets/streetview_zuiderpoort.jpg\" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim."
+    ],
+    "ts": "2026-07-03T15:09:47.738Z"
+  }
+}

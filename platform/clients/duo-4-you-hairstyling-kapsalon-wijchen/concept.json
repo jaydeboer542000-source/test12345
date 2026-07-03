@@ -1,0 +1,56 @@
+{
+  "merk_idee": "Duo 4 You = twee vakmensen, één stoel voor jou. De naam zegt het al: een duo dat er '4 you' is — alles op de site draait om die persoonlijke belofte: jij zit centraal.",
+  "verteller": {
+    "wat": "De doorlopende zin 'Voor jou …' — elke scène opent met een kop die met 'Voor jou' begint en zich afmaakt met de inhoud van die scène. Het woord 'jou' staat telkens in de italic van het display-font: één herkenbaar gebaar dat de hele site draagt.",
+    "regels": "Warm Nederlands (je/jij), korte zinnen, geen theater-jargon zichtbaar. De regel verschijnt één keer per scène, altijd als de scène-kop, altijd in dezelfde stijl. Uitzondering scène 1: daar is de merknaam de kop en staat 'Voor jou.' als subregel eronder (de naam zelf draagt daar het 'You'); de footer sluit af met '— voor jou.' zodat het gebaar de hele site afmaakt."
+  },
+  "scenes": [
+    {
+      "id": "entree",
+      "hoofdrolspeler": "De merknaam 'Duo 4 You' groot in display-type boven de echte gevelfoto (het uithangbord aan de Holenbergseweg).",
+      "verteller_regel": "Voor jou.",
+      "foto": "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg"
+    },
+    {
+      "id": "belofte",
+      "hoofdrolspeler": "De echte salon: de rij stoelen en spiegels (goedgekeurde interieurfoto) — aandacht en tijd als belofte.",
+      "verteller_regel": "Voor jou nemen we de tijd.",
+      "foto": "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg"
+    },
+    {
+      "id": "bewijs",
+      "hoofdrolspeler": "De echte Google-score: 4,9 uit 70 reviews — groot, vóór de vraag.",
+      "verteller_regel": "Voor jou al 70 keer beoordeeld.",
+      "foto": "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg"
+    },
+    {
+      "id": "afspraak",
+      "hoofdrolspeler": "De afspraak: telefoonnummer 024 645 5110 als directe actie + adres Holenbergseweg 16, Wijchen.",
+      "verteller_regel": "Voor jou een stoel vrij.",
+      "foto": "assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_4.jpg"
+    }
+  ],
+  "stijl": {
+    "formule": "Echte foto's = hoofdrolspeler (Jay keurde 5 foto's goed op 2026-07-03). Donker filmisch toneel met per scène één full-bleed echte foto onder een inkt-verloop, witte typografie, teal accent uit het echte logo.",
+    "kleuren": "Accent teal uit het geschilderde raam-logo (±#2FA5AC, licht #6BD0D6 op donker), inkt-donker toneel #181D1E, gebroken wit #F4F3EF. Saliegroen uit het interieur alleen als stille ondertoon. Bron: goedgekeurde foto's (logo op raam, deur, uithangbord).",
+    "typografie": "A2 — DM Serif Display (400 + italic) + DM Sans (400/500). Script-logo = persoonlijk en warm; de italic voor het woord 'jou' is het verteller-gebaar."
+  },
+  "echte_bronnen": {
+    "naam_adres_telefoon": "business.json (Google Places lead-finder)",
+    "reviews": "Google 4,9 / 70 (business.json)",
+    "fotos": "business.json photos.approved — 5 foto's, gekozen door Jay 2026-07-03",
+    "merkkleuren": "afgelezen van het echte logo op raam/deur/uithangbord in de goedgekeurde foto's",
+    "niet_tonen_tot_bevestigd": ["diensten", "prijzen", "openingstijden", "teamleden", "boekingswidget", "e-mail", "socials"]
+  },
+  "blokkades": [
+    "Openingstijden staan op de deur-foto maar zijn te klein om betrouwbaar te lezen — needs-confirm, weggelaten uit de site.",
+    "Diensten/prijzen onbekend (site niet gecrawld) — prijzen-scène weggelaten; geen boekingswidget bekend, dus bellen = de conversie-route."
+  ],
+  "bevestigen_door_salon": [
+    "sfeerbelofte 'Geen lopende band — gewoon aandacht en vakwerk.' (scène 2)",
+    "sfeerbelofte 'Voor jou een stoel vrij.' (scène 4, impliceert beschikbaarheid)",
+    "merkstilering 'Duo 4 You' (hoofdletter Y, zoals op het raam-logo) vs Places-naam 'Duo 4 you'",
+    "kicker-opacity .85 i.p.v. recept-.65 (leesbaarheid op foto) — ter goedkeuring Jay",
+    "openingstijden, diensten, prijzen"
+  ]
+}

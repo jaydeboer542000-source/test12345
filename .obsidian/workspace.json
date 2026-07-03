@@ -1,0 +1,218 @@
+{
+  "main": {
+    "id": "184379b6a8a0ab44",
+    "type": "split",
+    "children": [
+      {
+        "id": "a55e716caa031d8f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5dd3c5ee28b92576",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Grafiek weergave"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "560f2b538c310dba",
+    "type": "split",
+    "children": [
+      {
+        "id": "d1741883eb5b7740",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "25c5a8a5839993ba",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Verkenner"
+            }
+          },
+          {
+            "id": "e86a24eb28184dd0",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Zoeken"
+            }
+          },
+          {
+            "id": "cc51e5229f6dc80f",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bladwijzers"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "9c33fc89bfd6a1e4",
+    "type": "split",
+    "children": [
+      {
+        "id": "008178030a21e347",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9fb2ea547acf24cd",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Terugverwijzing"
+            }
+          },
+          {
+            "id": "d62ad071a58d8753",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Uitgaande verwijzingen"
+            }
+          },
+          {
+            "id": "5c92ec1fd16b6bb7",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Labels"
+            }
+          },
+          {
+            "id": "b6358e98de20dd9d",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Alle eigenschappen"
+            }
+          },
+          {
+            "id": "3b97d282f9bfd4c2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Overzicht"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open snel wisselen": false,
+      "graph:Open grafiek weergave": false,
+      "canvas:Nieuw doek aanmaken": false,
+      "daily-notes:Open de notitie van vandaag": false,
+      "templates:Sjabloon invoegen": false,
+      "command-palette:Open opdrachtenpaneel": false,
+      "bases:Nieuwe basis maken": false
+    }
+  },
+  "active": "5dd3c5ee28b92576",
+  "lastOpenFiles": [
+    "platform/lib/craft-lint.mjs.tmp.96774.f9097eceb1db",
+    "platform/lib/verkoop-regels.md",
+    "Naamloos.canvas",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/site.html",
+    "platform/dashboard.html.tmp.96774.a737e53aed93",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/concept.json",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_4.jpg",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_0.jpg",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets/scraped",
+    "platform/clients/duo-4-you-hairstyling-kapsalon-wijchen/assets",
+    "ai-geheugen/feedback_geen_verzonnen_beeld.md",
+    "ai-geheugen/MEMORY.md",
+    "platform/clients/milano/assets/logo-vrij.png",
+    "platform/clients/milano/drafts/site-v9-scrubversie.html",
+    "platform/clients/milano/assets/linea-web.mp4",
+    "platform/clients/milano/assets/linea-poster.jpg",
+    "platform/clients/milano/assets/linea.mp4",
+    "platform/clients/milano/drafts/WOW-PLAN.md",
+    "platform/clients/milano/drafts/qc-run.js",
+    "platform/clients/milano/drafts/outreach_2026-07-02.md",
+    "platform/clients/milano/drafts/ask_photos_2026-07-02T15-23-22-990Z.md",
+    "platform/clients/milano/drafts/ask_photos_2026-07-02T15-22-34-660Z.md",
+    "platform/clients/milano/drafts/qc.js",
+    "ai-geheugen/feedback_route_a_bewaking.md",
+    "platform/VISION.md",
+    "platform/clients/house-of-brothers/assets/scraped/House_of_brothers___3.jpg",
+    "platform/clients/house-of-brothers/assets/scraped/House_of_brothers___2.jpg",
+    "platform/clients/house-of-brothers/assets/scraped/House_of_brothers___1.jpg",
+    "Naamloos 1.canvas",
+    "AGENTS.md",
+    "BLUEPRINT.md",
+    "platform/clients/milano/drafts/ask_photos_2026-07-01T15-13-03-447Z.md",
+    "COCKPIT.md"
+  ]
+}

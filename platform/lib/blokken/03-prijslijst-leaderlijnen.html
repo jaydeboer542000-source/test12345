@@ -1,0 +1,164 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════
+BLOK 03 — PRIJSLIJST MET LEADERLIJNEN + KNIP-ACCENT
+Bewezen in: clients/milano/drafts/site-v15-toneel-jay.html (scène 5, "Il menu")
+
+WAT IS DIT?
+Een restaurant-menukaart-achtige prijslijst:
+- Elke regel: naam (+ duur, stil grijs) …puntjeslijn… prijs (vet).
+  De puntjeslijn is puur CSS (border-bottom:dotted op een flex-vulling),
+  dus hij rekt altijd precies mee — geen handwerk.
+- Het KNIP-accent: elke regel wordt van links naar rechts "opengeknipt"
+  (clip-path), regel voor regel. Eén subtiel gebaar, past bij een kapper;
+  bij een ander vak kun je de knip laten en alleen fadeUp gebruiken.
+
+ZO GEBRUIK JE HET:
+1. Kopieer CSS + HTML. Vul ALLEEN echte prijzen uit business.json in.
+   Prijs onbekend? Regel WEGLATEN (needs-confirm), nooit gokken.
+2. Groepen (Heren/Vrouwen/… of Voorgerechten/…) = .pl-groep met een h3.
+3. Twee manieren om te animeren:
+   a) LOS (dit bestand): IntersectionObserver start de knip zodra de
+      lijst in beeld komt. Werkt zonder GSAP.
+   b) IN HET TONEEL (blok 01): verwijder het observer-script en roep in
+      je scène-callback aan:
+        fadeUp(gsap, groepEl, p, 0.25, 0.33);
+        PRIJSLIJST.knip(groepEl, p, 0.28, 0.52, frac);
+4. Kleuren/fonts via de CSS-variabelen.
+═══════════════════════════════════════════════════════════════════════════
+-->
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blok 03 — Prijslijst met leaderlijnen</title>
+<style>
+/* ── DRAAIKNOPPEN ────────────────────────────────────────────────────── */
+:root{
+  --kleur-accent:#D8222A;
+  --kleur-inkt:#1C1917;
+  --kleur-grijs:#6B6560;
+  --font-display:Georgia,serif;   /* VERVANG door klant-display-font      */
+  --font-text:-apple-system,'Helvetica Neue',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--font-text);color:var(--kleur-inkt);
+  background:#FEFCFA;-webkit-font-smoothing:antialiased}
+
+/* ── de prijslijst ───────────────────────────────────────────────────── */
+.prijslijst{display:grid;grid-template-columns:repeat(2,1fr);gap:40px;
+  max-width:760px;width:100%;margin:0 auto;padding:48px 20px}
+.pl-kolom{display:flex;flex-direction:column;gap:26px}
+.pl-groep h3{font-family:var(--font-display);font-weight:600;font-size:13px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--kleur-accent);
+  margin:0 0 14px}
+.pl-groep ul{list-style:none;margin:0;padding:0}
+.pl-groep li{display:flex;align-items:baseline;gap:6px;
+  font-size:14px;color:var(--kleur-inkt);padding:5px 0}
+/* de leaderlijn: een lege flex-vulling met puntjes-onderrand.
+   order-truc: naam(1) → puntjes(2) → prijs(3). */
+.pl-groep li::before{content:"";order:2;flex:1;
+  border-bottom:1px dotted color-mix(in srgb, var(--kleur-grijs) 45%, transparent);
+  transform:translateY(-3px)}
+.pl-groep .d{order:1}                                  /* d = dienst      */
+.pl-groep .d em{font-style:normal;color:var(--kleur-grijs);
+  font-size:13px;white-space:nowrap}                   /* duur, stil      */
+.pl-groep .p{order:3;font-weight:600;white-space:nowrap} /* p = prijs     */
+
+/* startstand voor het knip-accent: regels dicht (clip tot 0 breed) */
+.pl-knip li{clip-path:inset(-2px 100% -2px 0)}
+
+@media (max-width:640px){
+  .prijslijst{grid-template-columns:1fr;gap:20px}
+  .pl-groep li{font-size:13px;padding:4px 0}
+  .pl-groep h3{margin-bottom:8px}
+}
+/* reduced-motion: geen knip, alles direct leesbaar */
+@media (prefers-reduced-motion: reduce){
+  .pl-knip li{clip-path:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- VERVANG alle namen/duren/prijzen door ECHTE data uit business.json.
+     class="pl-knip" op een groep = doet mee met het knip-accent.        -->
+<div class="prijslijst">
+  <div class="pl-groep pl-knip" data-groep="groep-1">
+    <h3>Groep 1 (vervang)</h3>
+    <ul>
+      <li><span class="d">Dienst A <em>30 min</em></span><span class="p">€ 0</span></li>
+      <li><span class="d">Dienst B <em>30 min</em></span><span class="p">€ 0</span></li>
+      <li><span class="d">Dienst C <em>45 min</em></span><span class="p">€ 0</span></li>
+    </ul>
+  </div>
+  <div class="pl-kolom">
+    <div class="pl-groep pl-knip" data-groep="groep-2">
+      <h3>Groep 2 (vervang)</h3>
+      <ul>
+        <li><span class="d">Dienst D <em>30 min</em></span><span class="p">€ 0</span></li>
+        <li><span class="d">Dienst E <em>15 min</em></span><span class="p">€ 0</span></li>
+      </ul>
+    </div>
+    <div class="pl-groep pl-knip" data-groep="groep-3">
+      <h3>Groep 3 (vervang)</h3>
+      <ul>
+        <li><span class="d">Dienst F <em>30 min</em></span><span class="p">€ 0</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── PRIJSLIJST.knip: het knip-accent, herbruikbaar ──────────────────────
+   knip(groepEl, p, a, b, frac): binnen venster a..b van progress p worden
+   de regels één voor één van links naar rechts open-geclipt.            */
+(function () {
+  'use strict';
+  window.PRIJSLIJST = window.PRIJSLIJST || {};
+  window.PRIJSLIJST.knip = function (groepEl, p, a, b, frac) {
+    if (!groepEl) return;
+    var lis = groepEl.querySelectorAll('li');
+    var n = lis.length || 1;
+    var w = (b - a) / n;                 /* elk regeltje krijgt z'n stukje */
+    for (var i = 0; i < n; i++) {
+      var t = frac(p, a + i * w, a + (i + 1) * w);
+      lis[i].style.clipPath = 'inset(-2px ' + ((1 - t) * 100) + '% -2px 0)';
+    }
+  };
+  /* zelfde frac-hulpje als het toneel (mocht blok 01 er niet zijn) */
+  window.PRIJSLIJST.frac = function (p, a, b) {
+    var t = (p - a) / (b - a);
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    return 1 - (1 - t) * (1 - t);
+  };
+})();
+
+/* ── LOSSE MODUS: knip zodra de lijst in beeld komt ──────────────────────
+   Gebruik je dit blok IN het toneel (blok 01)? VERWIJDER dit script en
+   stuur de knip vanuit je scène-callback (zie kop van dit bestand).     */
+(function () {
+  'use strict';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var frac = window.PRIJSLIJST.frac;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      var groep = e.target;
+      var t0 = null;
+      var DUUR = 900; /* ms — traag en fysiek (regel: ≥600ms) */
+      function stap(ts) {
+        if (t0 === null) t0 = ts;
+        var p = Math.min(1, (ts - t0) / DUUR);
+        window.PRIJSLIJST.knip(groep, p, 0, 1, frac);
+        if (p < 1) requestAnimationFrame(stap);
+      }
+      requestAnimationFrame(stap);
+    });
+  }, { threshold: 0.35 });
+  document.querySelectorAll('.pl-knip').forEach(function (g) { io.observe(g); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapsalon Milano — Een goede kapper in Wijchen</title>
+<meta name="description" content="Kapsalon Milano — een goede kapper in Wijchen. Met en zonder afspraak. Twee vestigingen: Centrum en Zuiderpoort.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23D8222A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rood:#D8222A;
+    --rood-diep:#C21F26;
+    --wit:#FFFFFF;
+    --offwhite:#FAF7F4;
+    --zwart:#161311;
+    --serif:"Fraunces", Georgia, serif;
+    --sans:"Inter", -apple-system, sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-bottom:110px;}
+  body{
+    font-family:var(--sans);
+    color:var(--zwart);
+    background:var(--offwhite);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--rood);color:var(--wit);}
+  a{color:inherit;}
+  img,video{max-width:100%;display:block;}
+  .serif{font-family:var(--serif);}
+
+  /* ============ PASSE-PARTOUT: witte lijst om elk doek ============ */
+  .passe{
+    position:absolute;inset:0;
+    pointer-events:none;z-index:5;
+    border:clamp(10px,2vw,26px) solid var(--wit);
+  }
+
+  /* ============ SCÈNE 1 — HET DOEK ============ */
+  #doek{position:relative;height:175vh;background:var(--wit);}
+  .doek-sticky{position:sticky;top:0;height:100vh;overflow:hidden;}
+  .doek-stage{
+    position:absolute;inset:0;background:var(--wit);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:clamp(24px,5vw,64px);
+  }
+  .doek-stage .stage-titel{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:clamp(2rem,6vw,4.6rem);
+    line-height:1.06;
+    letter-spacing:-0.01em;
+    max-width:16ch;
+    text-wrap:balance;
+  }
+  .doek-stage .stage-titel em{font-style:italic;color:var(--rood-diep);}
+  .doek-stage .regel{display:block;overflow:hidden;}
+  .doek-stage .regel > span{display:block;will-change:transform;}
+  .stage-naad{
+    position:absolute;left:50%;bottom:0;width:1px;height:22vh;
+    background:var(--rood);transform-origin:bottom;
+  }
+  .doek-curtain{
+    position:absolute;inset:0;z-index:10;overflow:hidden;background:var(--rood-diep);
+    will-change:transform;
+    box-shadow:0 26px 70px rgba(60,5,8,.42);
+  }
+  .doek-curtain video{
+    position:absolute;left:0;right:0;top:-8%;width:100%;height:116%;object-fit:cover;
+    will-change:transform;
+  }
+  .doek-curtain .curtain-shade{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(60,5,8,.45) 100%);
+  }
+  .curtain-inhoud{
+    position:absolute;inset:0;z-index:12;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;color:var(--zwart);
+    padding:clamp(24px,5vw,64px) clamp(24px,5vw,64px) 14vh;
+    background:radial-gradient(ellipse 62% 55% at center, rgba(255,255,255,.9) 38%, rgba(255,255,255,0) 75%);
+  }
+  .doek-logo{
+    width:clamp(120px,15vw,200px);
+    margin-bottom:clamp(16px,3vh,28px);
+    filter:drop-shadow(0 6px 30px rgba(0,0,0,.35));
+  }
+  .curtain-inhoud h1{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(2rem,5.4vw,4.1rem);line-height:1.08;letter-spacing:-0.01em;
+    max-width:17ch;text-wrap:balance;text-shadow:0 2px 26px rgba(255,255,255,.9);
+  }
+  .curtain-inhoud h1 em{font-style:italic;color:var(--rood-diep);}
+  .curtain-sub{
+    margin-top:1.1rem;font-size:clamp(.78rem,1.3vw,.95rem);
+    letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--rood-diep);
+    text-shadow:0 1px 14px rgba(255,255,255,.9);
+  }
+  .curtain-acties{
+    margin-top:clamp(22px,4vh,36px);
+    display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+  }
+  .knop-lijnwit{border:1.5px solid var(--zwart);color:var(--zwart);background:rgba(255,255,255,.75);}
+  .knop-lijnwit:hover{background:var(--zwart);color:var(--wit);}
+  /* entree: tijdgestuurde fade-in bij load, geen scroll nodig */
+  .curtain-inhoud > *{opacity:0;transform:translateY(18px);animation:entree .9s cubic-bezier(.22,1,.36,1) forwards;}
+  .curtain-inhoud .doek-logo{animation-delay:.15s;}
+  .curtain-inhoud h1{animation-delay:.32s;}
+  .curtain-inhoud .curtain-sub{animation-delay:.5s;}
+  .curtain-inhoud .curtain-acties{animation-delay:.66s;}
+  @keyframes entree{to{opacity:1;transform:translateY(0);}}
+  .doek-hint{
+    position:absolute;left:50%;bottom:6vh;transform:translateX(-50%);
+    z-index:12;color:var(--zwart);font-size:.72rem;letter-spacing:.3em;
+    text-transform:uppercase;opacity:.8;font-weight:600;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .doek-hint::after{
+    content:"";width:1px;height:38px;background:var(--zwart);
+    animation:hintdrop 2.2s ease-in-out infinite;
+  }
+  @keyframes hintdrop{
+    0%{transform:scaleY(0);transform-origin:top;}
+    45%{transform:scaleY(1);transform-origin:top;}
+    55%{transform:scaleY(1);transform-origin:bottom;}
+    100%{transform:scaleY(0);transform-origin:bottom;}
+  }
+
+  /* ============ SCÈNE-KOP (theateraffiche) ============ */
+  .scene-kop{
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    gap:.9rem;padding:0 24px;
+  }
+  .scene-nr{
+    font-family:var(--serif);font-weight:700;font-size:.95rem;
+    color:var(--rood-diep);letter-spacing:.35em;text-transform:uppercase;
+    text-wrap:balance;
+  }
+  .scene-nr::before{content:"— ";}
+  .scene-nr::after{content:" —";}
+  .scene-titel{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(2.2rem,6.5vw,4.8rem);line-height:1;letter-spacing:-0.01em;
+    text-wrap:balance;
+  }
+
+  /* ============ SCÈNE 2 — DE SPLITSING ============ */
+  #splitsing{position:relative;background:var(--wit);}
+  .split-intro{padding:clamp(44px,7vh,72px) 0 clamp(24px,4vh,40px);}
+  .split-intro .scene-titel em{font-style:italic;color:var(--rood-diep);}
+  .split-intro p{
+    margin-top:1.1rem;font-size:clamp(.95rem,1.5vw,1.1rem);color:#5a534e;
+    max-width:44ch;margin-left:auto;margin-right:auto;line-height:1.6;
+  }
+  .split-naad{
+    width:1px;height:44px;background:var(--rood);margin:1.6rem auto 0;
+    transform-origin:top;
+  }
+  .split-stage{
+    display:grid;grid-template-columns:1fr 1fr;position:relative;
+  }
+  .split-stage::before{
+    content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;
+    background:var(--rood);z-index:3;
+  }
+  .helft{
+    position:relative;overflow:hidden;background:var(--wit);
+    display:flex;align-items:center;justify-content:center;
+    padding:clamp(48px,7vw,90px) clamp(24px,5vw,72px) clamp(96px,11vh,120px);
+    cursor:pointer;transition:background .5s ease;
+    will-change:transform;
+  }
+  .helft-zijde{
+    position:absolute;inset:0;opacity:.22;transition:opacity .8s ease;pointer-events:none;
+  }
+  .helft-zijde img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:grayscale(1) contrast(1.05);
+  }
+  .helft-zijde::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:var(--rood);mix-blend-mode:screen;opacity:.55; /* rood duotone */
+  }
+  .helft-zijde::after{content:"";position:absolute;inset:0;z-index:2;background:rgba(255,255,255,.88);}
+  .helft:hover .helft-zijde,
+  .helft.actief .helft-zijde{opacity:1;}
+  .helft-inhoud{position:relative;z-index:2;max-width:420px;width:100%;}
+  .helft-eyebrow{
+    font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--rood-diep);font-weight:600;margin-bottom:.8rem;
+  }
+  .helft h3{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(2rem,3.6vw,3rem);line-height:1;margin-bottom:1.4rem;
+  }
+  .helft-adres{font-size:1rem;line-height:1.55;color:#3d3733;margin-bottom:1.2rem;}
+  .helft-ster{
+    display:inline-flex;align-items:baseline;gap:.5rem;margin-bottom:1.5rem;
+    font-family:var(--serif);font-size:1.5rem;font-weight:600;
+  }
+  .helft-ster .ster{color:var(--rood);}
+  .helft-ster small{font-family:var(--sans);font-size:.8rem;color:#6b645e;font-weight:500;}
+  .uren{list-style:none;font-size:.92rem;line-height:1.9;margin-bottom:1.8rem;}
+  .uren li{display:flex;justify-content:space-between;gap:16px;border-bottom:1px dotted #e4ddd6;}
+  .uren li span:first-child{color:#6b645e;}
+  .uren li.dicht span:last-child{color:#7c736b;}
+  .uren li.laat span:last-child{color:var(--rood);font-weight:600;}
+  .helft-acties{display:flex;flex-wrap:wrap;gap:12px;}
+  .knop{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:15px 26px;font-weight:600;font-size:.95rem;text-decoration:none;
+    border-radius:999px;transition:background .25s ease,color .25s ease,transform .25s ease;
+  }
+  .knop-rood{background:var(--rood);color:var(--wit);}
+  .knop-rood:hover{background:var(--rood-diep);transform:translateY(-2px);}
+  .knop-lijn{border:1.5px solid var(--zwart);color:var(--zwart);}
+  .knop-lijn:hover{background:var(--zwart);color:var(--wit);}
+  .split-tabs{display:none;}
+
+  /* ============ SCÈNE 3 — MENUKAART ============ */
+  #menukaart{
+    background:var(--wit);position:relative;
+    padding:clamp(90px,14vh,160px) 24px clamp(150px,18vh,200px);
+  }
+  #menukaart::before{
+    content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:1px;height:clamp(50px,8vh,90px);background:var(--rood);
+  }
+  .menu-kader{max-width:680px;margin:0 auto;}
+  .menu-kader .scene-kop{margin-bottom:clamp(48px,8vh,90px);}
+  .menu-kader .scene-titel em{font-style:italic;color:var(--rood-diep);}
+  .akte{margin-bottom:clamp(48px,7vh,80px);}
+  .akte:last-of-type{margin-bottom:0;}
+  .akte-kop{
+    display:flex;align-items:baseline;gap:1rem;margin-bottom:1.8rem;
+  }
+  .akte-nr{
+    font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--rood-diep);
+    white-space:nowrap;
+  }
+  .akte-kop h4{
+    font-family:var(--serif);font-weight:600;font-size:clamp(1.6rem,3vw,2.2rem);
+    line-height:1;
+  }
+  .akte-kop::after{content:"";flex:1;height:1px;background:#e9e2da;transform:translateY(-6px);}
+  .nummer{
+    display:flex;align-items:baseline;justify-content:space-between;gap:20px;
+    padding:1.05rem 0;border-bottom:none;
+    background:linear-gradient(#eadfd4,#eadfd4) left bottom / 100% 1px no-repeat;
+  }
+  .nummer:last-child{background:none;}
+  /* intermezzo: korte pauze midden in het programma */
+  .pauze{
+    position:relative;overflow:hidden;margin:clamp(48px,7vh,80px) 0;
+    height:clamp(120px,18vh,180px);display:flex;align-items:center;justify-content:center;
+  }
+  .pauze img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:grayscale(1) contrast(1.05);
+  }
+  .pauze::before{
+    content:"";position:absolute;inset:0;background:var(--rood-diep);
+    mix-blend-mode:screen;opacity:.6;
+  }
+  .pauze::after{content:"";position:absolute;inset:0;background:rgba(216,34,42,.28);}
+  .pauze span{
+    position:relative;z-index:2;font-family:var(--serif);font-style:italic;
+    color:var(--wit);font-size:clamp(1rem,1.8vw,1.3rem);letter-spacing:.08em;
+    text-shadow:0 2px 18px rgba(60,5,8,.6);
+  }
+  .nummer-naam{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.05rem,1.9vw,1.3rem);line-height:1.3;
+  }
+  .nummer-onder{
+    font-size:.82rem;color:#8a817a;margin-top:.25rem;letter-spacing:.04em;
+  }
+  .nummer-prijs{
+    font-family:var(--serif);font-weight:600;font-size:clamp(1.1rem,2vw,1.35rem);
+    color:var(--rood);white-space:nowrap;
+  }
+  .menu-voetnoot{
+    margin-top:clamp(40px,6vh,64px);text-align:center;
+    font-size:.9rem;color:#6b645e;line-height:1.7;
+  }
+  .menu-voetnoot strong{color:var(--zwart);}
+
+  /* ============ SCÈNE 4 — PRAKTISCH ============ */
+  #praktisch{background:var(--rood);color:var(--wit);position:relative;overflow:hidden;
+    padding:clamp(80px,12vh,140px) 24px clamp(120px,16vh,180px);}
+  #praktisch .prak-zijde{position:absolute;inset:0;opacity:.35;}
+  #praktisch .prak-zijde video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  #praktisch .passe{border-color:var(--offwhite);}
+  .prak-kader{position:relative;z-index:2;max-width:880px;margin:0 auto;text-align:center;}
+  .prak-kader .scene-nr{color:var(--wit);opacity:.85;}
+  .prak-kader .scene-titel{color:var(--wit);}
+  .prak-regels{
+    margin-top:clamp(40px,6vh,64px);
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.28);
+    border:1px solid rgba(255,255,255,.28);
+  }
+  .prak-regel{background:var(--rood);padding:clamp(24px,3.5vw,40px) clamp(16px,2.5vw,28px);}
+  .prak-regel h5{
+    font-family:var(--serif);font-weight:600;font-size:clamp(1.2rem,2.2vw,1.6rem);
+    margin-bottom:.6rem;line-height:1.15;
+  }
+  .prak-regel p{font-size:.88rem;line-height:1.6;opacity:.92;}
+  .prak-uren{
+    margin-top:clamp(40px,6vh,64px);display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(24px,4vw,48px);text-align:left;
+  }
+  .prak-uren .kolom h6{
+    font-family:var(--serif);font-size:1.25rem;font-weight:600;margin-bottom:1rem;
+    padding-bottom:.6rem;border-bottom:1px solid rgba(255,255,255,.35);
+  }
+  .prak-uren .uren li{border-bottom-color:rgba(255,255,255,.18);}
+  .prak-uren .uren{margin-bottom:0;}
+  .prak-uren .uren li span:first-child{color:rgba(255,255,255,.9);}
+  .prak-uren .uren li.dicht span:last-child{color:var(--wit);font-weight:500;}
+  .prak-uren .uren li.laat span:last-child{color:var(--wit);font-weight:700;}
+
+  /* ============ SCÈNE 5 — APPLAUS ============ */
+  #applaus{position:relative;min-height:100vh;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    padding:clamp(90px,12vh,150px) 24px clamp(150px,18vh,200px);background:var(--rood-diep);}
+  #applaus .applaus-zijde{position:absolute;inset:0;}
+  #applaus .applaus-zijde img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:grayscale(1) contrast(1.08);
+  }
+  #applaus .applaus-zijde::before{
+    content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(rgba(194,31,38,.55),rgba(120,10,15,.6));
+  }
+  #applaus .applaus-zijde::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse at center, rgba(90,8,12,.25) 0%, rgba(60,5,8,.62) 100%);
+  }
+  .applaus-kader{position:relative;z-index:2;text-align:center;color:var(--wit);max-width:900px;}
+  .applaus-kader .scene-nr{color:var(--wit);opacity:.9;}
+  .applaus-kader .scene-titel{color:var(--wit);text-shadow:0 4px 40px rgba(0,0,0,.3);}
+  .recensies{
+    margin-top:clamp(36px,5vh,56px);
+    display:flex;justify-content:center;gap:clamp(28px,6vw,80px);flex-wrap:wrap;
+  }
+  .recensie{text-align:center;}
+  .recensie .cijfer{
+    font-family:var(--serif);font-weight:700;font-size:clamp(3rem,8vw,5.5rem);line-height:1;
+  }
+  .recensie .cijfer .ster{font-size:.55em;vertical-align:.32em;margin-right:.12em;}
+  .recensie .stemmen{
+    margin-top:.5rem;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+    opacity:.85;font-weight:500;
+  }
+  .applaus-knoppen{
+    margin-top:clamp(40px,6vh,64px);display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+  }
+  .knop-wit{background:var(--wit);color:var(--rood);}
+  .knop-wit:hover{background:var(--offwhite);transform:translateY(-2px);}
+  .knop-groot{padding:19px 34px;font-size:1.02rem;}
+  .applaus-bellen{
+    margin-top:1.6rem;font-size:.92rem;opacity:.92;line-height:1.9;
+  }
+  .applaus-bellen a{
+    color:var(--wit);font-weight:600;text-decoration:underline;text-underline-offset:3px;
+    display:inline-block;padding:13px 4px;margin:-13px -4px; /* tap target >=44px zonder layoutverschil */
+  }
+
+  /* ============ FOOTER ============ */
+  footer{background:var(--wit);padding:clamp(60px,9vh,100px) 24px 140px;}
+  .foot-kader{max-width:880px;margin:0 auto;}
+  .foot-logo{width:120px;margin:0 auto 3rem;}
+  .foot-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);
+    padding-bottom:2.6rem;border-bottom:1px solid #ece5dd;
+  }
+  .foot-vestiging h6{
+    font-family:var(--serif);font-size:1.15rem;font-weight:600;margin-bottom:.8rem;
+  }
+  .foot-vestiging p{font-size:.9rem;line-height:2.1;color:#5a534e;}
+  .foot-vestiging a{
+    color:var(--rood-diep);font-weight:500;text-decoration:none;
+    display:inline-block;padding:13px 4px;margin:-13px -4px; /* tap target >=44px */
+  }
+  .foot-vestiging a:hover{text-decoration:underline;}
+  .foot-onder{
+    padding-top:2rem;display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;
+    font-size:.82rem;color:#8a817a;line-height:1.7;
+  }
+  .foot-demo{
+    margin-top:2.4rem;padding:1rem 1.3rem;background:var(--offwhite);
+    border-left:3px solid var(--rood);font-size:.8rem;color:#6b645e;line-height:1.6;
+  }
+
+  /* ============ STICKY BOEK/BEL-BALK ============ */
+  #stickybar{
+    position:fixed;left:0;right:0;bottom:0;z-index:100;
+    transform:translateY(110%);transition:transform .5s cubic-bezier(.22,1,.36,1);
+    padding:10px clamp(14px,3vw,18px) calc(12px + env(safe-area-inset-bottom));
+    display:flex;justify-content:center;pointer-events:none;
+  }
+  #stickybar.zichtbaar{transform:translateY(0);}
+  .balk{
+    pointer-events:auto;display:flex;align-items:center;gap:8px;
+    background:var(--wit);border:1px solid #ece5dd;border-radius:999px;
+    box-shadow:0 12px 40px rgba(22,19,17,.16);
+    padding:7px;max-width:560px;width:100%;
+  }
+  .balk-wissel{
+    display:flex;background:var(--offwhite);border-radius:999px;padding:3px;flex-shrink:0;
+  }
+  .balk-wissel button{
+    border:none;background:none;font-family:var(--sans);font-size:.72rem;font-weight:600;
+    padding:0 12px;min-height:44px;border-radius:999px;cursor:pointer;color:#6f665f;
+    transition:all .25s ease;letter-spacing:.02em;
+  }
+  .balk-wissel button.actief{background:var(--zwart);color:var(--wit);}
+  .balk-knoppen{display:flex;gap:8px;flex:1;min-width:0;}
+  .balk-knoppen .knop{flex:1;padding:0 10px;min-height:44px;font-size:.85rem;white-space:nowrap;}
+  .balk .knop-lijn{border-color:#d8d0c8;}
+
+  /* ============ REDUCED MOTION ============ */
+  @media (prefers-reduced-motion:reduce){
+    .doek-hint::after{animation:none;}
+    .curtain-inhoud > *{animation:none;opacity:1;transform:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ============ MOBIEL ============ */
+  @media (max-width:760px){
+    #doek{height:135vh;}
+    .curtain-inhoud{padding-bottom:16vh;}
+    .scene-nr{font-size:.72rem;letter-spacing:.18em;}
+    .stage-naad{height:16vh;}
+    .split-stage{grid-template-columns:1fr;min-height:0;}
+    .split-stage::before{display:none;}
+    .split-tabs{
+      display:flex;position:sticky;top:0;z-index:30;background:var(--wit);
+      border-top:1px solid var(--rood);border-bottom:1px solid #ece5dd;
+    }
+    .split-tabs button{
+      flex:1;border:none;background:var(--wit);font-family:var(--serif);
+      font-size:1.05rem;font-weight:600;padding:16px 8px;cursor:pointer;
+      color:#a39a92;transition:all .25s ease;border-bottom:3px solid transparent;
+    }
+    .split-tabs button.actief{color:var(--zwart);border-bottom-color:var(--rood);}
+    .helft{display:none;padding:44px 24px 120px;} /* onderruimte: sticky balk mag niets bedekken */
+    .helft.mob-zichtbaar{display:flex;}
+    .helft .helft-zijde{opacity:1;}
+    .prak-regels{grid-template-columns:1fr;}
+    .prak-uren{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr;}
+    .recensie .cijfer{font-size:3.4rem;}
+    .applaus-knoppen{flex-direction:column;align-items:stretch;}
+    .balk-wissel button{padding:0 9px;font-size:.68rem;}
+    .curtain-acties{width:100%;}
+    .curtain-acties .knop{flex:1 1 100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SCÈNE 1 · HET DOEK ══════════ -->
+<section id="doek" aria-label="Entree">
+  <div class="doek-sticky">
+    <div class="doek-stage">
+      <div class="scene-nr serif">Scène&nbsp;één&nbsp;·&nbsp;Het&nbsp;doek</div>
+      <p class="stage-titel" style="margin-top:1rem;"><span class="regel"><span>Het doek gaat op.</span></span><span class="regel"><span><em>Kies je stoel.</em></span></span></p>
+      <div class="stage-naad" id="stagenaad" aria-hidden="true"></div>
+    </div>
+    <div class="doek-curtain" id="curtain">
+      <video src="assets/decor/s1-entree-web.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
+      <div class="curtain-shade"></div>
+      <div class="curtain-inhoud">
+        <img class="doek-logo" src="assets/logo-vrij.png" alt="Kapsalon Milano">
+        <h1>Een goede kapper in Wijchen.<br><em>Met en zonder afspraak.</em></h1>
+        <p class="curtain-sub">Centrum &amp; Zuiderpoort · ★ 4,7 en 4,8 op Google</p>
+        <div class="curtain-acties">
+          <a class="knop knop-rood" href="#splitsing">Maak afspraak</a>
+          <a class="knop knop-lijnwit" href="#menukaart">Bekijk prijzen</a>
+        </div>
+      </div>
+      <div class="doek-hint">Scroll</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SCÈNE 2 · DE SPLITSING ══════════ -->
+<section id="splitsing" aria-label="Kies je vestiging">
+  <div class="split-intro scene-kop">
+    <div class="scene-nr">Scène twee</div>
+    <h2 class="scene-titel">Twee stoelen, <em>één naam.</em></h2>
+    <p>Milano zit twee keer in Wijchen. Zelfde naam, zelfde vak — maar elke stoel heeft z'n eigen adres, z'n eigen uren en z'n eigen stamgasten. Welke Milano is de jouwe?</p>
+    <div class="split-naad" id="naad"></div>
+  </div>
+
+  <div class="split-tabs" id="splittabs">
+    <button type="button" data-tab="centrum" class="actief">Centrum</button>
+    <button type="button" data-tab="zuiderpoort">Zuiderpoort</button>
+  </div>
+
+  <div class="split-stage">
+    <!-- CENTRUM -->
+    <article class="helft mob-zichtbaar" id="helft-centrum" data-vestiging="centrum">
+      <div class="helft-zijde"><img src="assets/decor/s2-ritueel-v1.jpg" alt="" aria-hidden="true"></div>
+      <div class="helft-inhoud">
+        <div class="helft-eyebrow">Vestiging één</div>
+        <h3>Centrum</h3>
+        <p class="helft-adres">Spoorstraat 27<br>6602 AV Wijchen</p>
+        <div class="helft-ster"><span class="ster">★</span>4,7 <small>uit 118 Google-reviews</small></div>
+        <ul class="uren">
+          <li class="dicht"><span>Maandag</span><span>gesloten</span></li>
+          <li><span>Dinsdag</span><span>08:30 – 18:00</span></li>
+          <li><span>Woensdag</span><span>08:30 – 18:00</span></li>
+          <li><span>Donderdag</span><span>08:30 – 18:00</span></li>
+          <li class="laat"><span>Vrijdag</span><span>08:30 – 20:00</span></li>
+          <li><span>Zaterdag</span><span>08:30 – 17:00</span></li>
+          <li class="dicht"><span>Zondag</span><span>gesloten</span></li>
+        </ul>
+        <div class="helft-acties">
+          <a class="knop knop-rood" href="https://www.kapsalonmilano.nl/centrum.html" target="_blank" rel="noopener">Reserveer je stoel</a>
+          <a class="knop knop-lijn" href="tel:0618486557">Bel 06-18486557</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ZUIDERPOORT -->
+    <article class="helft" id="helft-zuiderpoort" data-vestiging="zuiderpoort">
+      <div class="helft-zijde"><img src="assets/decor/s2-ritueel-v2.jpg" alt="" aria-hidden="true"></div>
+      <div class="helft-inhoud">
+        <div class="helft-eyebrow">Vestiging twee</div>
+        <h3>Zuiderpoort</h3>
+        <p class="helft-adres">Zuiderpoort 19B<br>6605 HM Wijchen</p>
+        <div class="helft-ster"><span class="ster">★</span>4,8 <small>uit 143 Google-reviews</small></div>
+        <ul class="uren">
+          <li><span>Maandag</span><span>13:00 – 19:00</span></li>
+          <li><span>Dinsdag</span><span>09:30 – 19:00</span></li>
+          <li><span>Woensdag</span><span>09:30 – 19:00</span></li>
+          <li><span>Donderdag</span><span>09:30 – 19:00</span></li>
+          <li class="laat"><span>Vrijdag</span><span>09:30 – 20:00</span></li>
+          <li><span>Zaterdag</span><span>09:30 – 18:00</span></li>
+          <li class="dicht"><span>Zondag</span><span>gesloten</span></li>
+        </ul>
+        <div class="helft-acties">
+          <a class="knop knop-rood" href="https://www.kapsalonmilano.nl/zuiderpoort.html" target="_blank" rel="noopener">Reserveer je stoel</a>
+          <a class="knop knop-lijn" href="tel:0248441193">Bel 024-8441193</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ══════════ SCÈNE 3 · DE MENUKAART ══════════ -->
+<section id="menukaart" aria-label="Prijslijst">
+  <div class="menu-kader">
+    <div class="scene-kop">
+      <div class="scene-nr">Scène&nbsp;drie&nbsp;·&nbsp;Het&nbsp;programma</div>
+      <h2 class="scene-titel">De menukaart <em>van de avond.</em></h2>
+    </div>
+
+    <div class="akte">
+      <div class="akte-kop"><span class="akte-nr">Akte I</span><h4>Heren</h4></div>
+      <div class="nummer"><div><div class="nummer-naam">Knippen</div><div class="nummer-onder">30 min</div></div><div class="nummer-prijs">€ 28</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Knippen incl. wassen</div><div class="nummer-onder">30 min</div></div><div class="nummer-prijs">€ 30</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Knippen incl. baard scheren / trimmen</div><div class="nummer-onder">45 min</div></div><div class="nummer-prijs">€ 48</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Baard scheren / trimmen</div><div class="nummer-onder">15 min</div></div><div class="nummer-prijs">€ 22</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Geheel tondeuse</div><div class="nummer-onder">15 min</div></div><div class="nummer-prijs">€ 15</div></div>
+    </div>
+
+    <div class="pauze" aria-hidden="true">
+      <img src="assets/decor/s5-menu-v1.jpg" alt="">
+      <span>— korte pauze —</span>
+    </div>
+
+    <div class="akte">
+      <div class="akte-kop"><span class="akte-nr">Akte II</span><h4>Vrouwen</h4></div>
+      <div class="nummer"><div><div class="nummer-naam">Knippen kort haar</div><div class="nummer-onder">30 min</div></div><div class="nummer-prijs">€ 28</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Knippen lang haar</div><div class="nummer-onder">30 min</div></div><div class="nummer-prijs">€ 30</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Wenkbrauwen epileren</div><div class="nummer-onder">15 min</div></div><div class="nummer-prijs">€ 15</div></div>
+      <div class="nummer"><div><div class="nummer-naam">Geheel gezicht epileren</div><div class="nummer-onder">30 min</div></div><div class="nummer-prijs">€ 27</div></div>
+    </div>
+
+    <div class="akte">
+      <div class="akte-kop"><span class="akte-nr">Akte III</span><h4>Kinderen</h4></div>
+      <div class="nummer"><div><div class="nummer-naam">Kinderen t/m 10 jaar — knippen</div><div class="nummer-onder">30 min</div></div><div class="nummer-prijs">€ 23</div></div>
+    </div>
+
+    <p class="menu-voetnoot">Een kwartier tot drie kwartier in de stoel — en je loopt weer scherp de deur uit.<br><strong>Loop gewoon binnen. Of reserveer je stoel.</strong></p>
+  </div>
+</section>
+
+<!-- ══════════ SCÈNE 4 · PRAKTISCH ══════════ -->
+<section id="praktisch" aria-label="Praktische informatie">
+  <div class="prak-zijde"><video src="assets/decor/s4-zaken-web.mp4" autoplay muted loop playsinline aria-hidden="true"></video></div>
+  <div class="passe" aria-hidden="true"></div>
+  <div class="prak-kader">
+    <div class="scene-kop">
+      <div class="scene-nr">Scène&nbsp;vier&nbsp;·&nbsp;De&nbsp;zaken</div>
+      <h2 class="scene-titel">Zo simpel is het.</h2>
+    </div>
+    <div class="prak-regels">
+      <div class="prak-regel">
+        <h5>Zonder afspraak</h5>
+        <p>Loop gewoon binnen wanneer het jou uitkomt. De stoel wacht wel.</p>
+      </div>
+      <div class="prak-regel">
+        <h5>Met afspraak</h5>
+        <p>Liever zeker van je plek? Reserveer online je stoel bij Centrum of Zuiderpoort.</p>
+      </div>
+      <div class="prak-regel">
+        <h5>Pinnen? Ja graag.</h5>
+        <p>Pinnen kan gewoon. Creditcards doen we niet.</p>
+      </div>
+    </div>
+    <div class="prak-uren">
+      <div class="kolom">
+        <h6>Centrum · Spoorstraat 27</h6>
+        <ul class="uren">
+          <li class="dicht"><span>Ma</span><span>gesloten</span></li>
+          <li><span>Di – Do</span><span>08:30 – 18:00</span></li>
+          <li class="laat"><span>Vr</span><span>08:30 – 20:00</span></li>
+          <li><span>Za</span><span>08:30 – 17:00</span></li>
+          <li class="dicht"><span>Zo</span><span>gesloten</span></li>
+        </ul>
+      </div>
+      <div class="kolom">
+        <h6>Zuiderpoort · Zuiderpoort 19B</h6>
+        <ul class="uren">
+          <li><span>Ma</span><span>13:00 – 19:00</span></li>
+          <li><span>Di – Do</span><span>09:30 – 19:00</span></li>
+          <li class="laat"><span>Vr</span><span>09:30 – 20:00</span></li>
+          <li><span>Za</span><span>09:30 – 18:00</span></li>
+          <li class="dicht"><span>Zo</span><span>gesloten</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SCÈNE 5 · APPLAUS ══════════ -->
+<section id="applaus" aria-label="Reserveer je stoel">
+  <div class="applaus-zijde"><img src="assets/decor/s3-applaus-v1.jpg" alt="" aria-hidden="true"></div>
+  <div class="passe" aria-hidden="true"></div>
+  <div class="applaus-kader">
+    <div class="scene-nr">Scène&nbsp;vijf&nbsp;·&nbsp;Slotapplaus</div>
+    <h2 class="scene-titel">Wijchen heeft gestemd.</h2>
+    <div class="recensies">
+      <div class="recensie">
+        <div class="cijfer"><span class="ster">★</span><span class="score" data-score="4.7">4,7</span></div>
+        <div class="stemmen">118 stemmen · Centrum</div>
+      </div>
+      <div class="recensie">
+        <div class="cijfer"><span class="ster">★</span><span class="score" data-score="4.8">4,8</span></div>
+        <div class="stemmen">143 stemmen · Zuiderpoort</div>
+      </div>
+    </div>
+    <div class="applaus-knoppen">
+      <a class="knop knop-wit knop-groot" href="https://www.kapsalonmilano.nl/centrum.html" target="_blank" rel="noopener">Reserveer je stoel — Centrum</a>
+      <a class="knop knop-wit knop-groot" href="https://www.kapsalonmilano.nl/zuiderpoort.html" target="_blank" rel="noopener">Reserveer je stoel — Zuiderpoort</a>
+    </div>
+    <p class="applaus-bellen">
+      Liever even bellen? Centrum <a href="tel:0618486557">06-18486557</a> · Zuiderpoort <a href="tel:0248441193">024-8441193</a>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="foot-kader">
+    <img class="foot-logo" src="assets/logo-vrij.png" alt="Kapsalon Milano">
+    <div class="foot-grid">
+      <div class="foot-vestiging">
+        <h6>Milano Centrum</h6>
+        <p>
+          Spoorstraat 27, 6602 AV Wijchen<br>
+          <a href="tel:0618486557">06-18486557</a><br>
+          <a href="mailto:centrum@kapsalonmilano.nl">centrum@kapsalonmilano.nl</a><br>
+          ★ 4,7 · 118 Google-reviews
+        </p>
+      </div>
+      <div class="foot-vestiging">
+        <h6>Milano Zuiderpoort</h6>
+        <p>
+          Zuiderpoort 19B, 6605 HM Wijchen<br>
+          <a href="tel:0248441193">024-8441193</a> · <a href="tel:0629544449">06-29544449</a><br>
+          <a href="mailto:zuiderpoort@kapsalonmilano.nl">zuiderpoort@kapsalonmilano.nl</a><br>
+          ★ 4,8 · 143 Google-reviews
+        </p>
+      </div>
+    </div>
+    <div class="foot-onder">
+      <span>Met en zonder afspraak · Pinnen (geen creditcard)</span>
+      <span><a href="https://www.facebook.com/milanozuid" target="_blank" rel="noopener" style="color:var(--rood);text-decoration:none;font-weight:500;display:inline-block;padding:13px 6px;margin:-13px -6px;">Facebook — milanozuid</a></span>
+    </div>
+    <p class="foot-demo">
+      Dit is een onafhankelijke demo-herontwerp van kapsalonmilano.nl — niet de officiële website van Kapsalon Milano. Alle prijzen, tijden en reviewscores komen van de echte salon (peildatum juli 2026).
+    </p>
+  </div>
+</footer>
+
+<!-- ══════════ STICKY BOEK/BEL-BALK ══════════ -->
+<div id="stickybar" role="complementary" aria-label="Snel bellen of boeken">
+  <div class="balk">
+    <div class="balk-wissel" id="balkwissel">
+      <button type="button" data-vestiging="centrum" class="actief">Centrum</button>
+      <button type="button" data-vestiging="zuiderpoort">Zuiderpoort</button>
+    </div>
+    <div class="balk-knoppen">
+      <a class="knop knop-lijn" id="balkbel" href="tel:0618486557">Bel</a>
+      <a class="knop knop-rood" id="balkboek" href="https://www.kapsalonmilano.nl/centrum.html" target="_blank" rel="noopener">Maak afspraak</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- data: de twee vestigingen ---------- */
+  var VESTIGING = {
+    centrum:     { tel: "tel:0618486557", boek: "https://www.kapsalonmilano.nl/centrum.html" },
+    zuiderpoort: { tel: "tel:0248441193", boek: "https://www.kapsalonmilano.nl/zuiderpoort.html" }
+  };
+
+  /* ---------- video's netjes starten (geen console-ruis) ---------- */
+  document.querySelectorAll("video").forEach(function(v){
+    var p = v.play();
+    if (p && typeof p.catch === "function") p.catch(function(){ /* autoplay geweigerd: stilstand is prima */ });
+  });
+
+  /* ---------- vestiging kiezen: balk + tabs + helften in sync ---------- */
+  var balkBel  = document.getElementById("balkbel");
+  var balkBoek = document.getElementById("balkboek");
+  var wisselKnoppen = document.querySelectorAll("#balkwissel button");
+  var tabKnoppen = document.querySelectorAll("#splittabs button");
+  var helften = document.querySelectorAll(".helft");
+
+  function kies(vestiging, bron){
+    if (!VESTIGING[vestiging]) return;
+    balkBel.href  = VESTIGING[vestiging].tel;
+    balkBoek.href = VESTIGING[vestiging].boek;
+    wisselKnoppen.forEach(function(b){ b.classList.toggle("actief", b.dataset.vestiging === vestiging); });
+    tabKnoppen.forEach(function(b){ b.classList.toggle("actief", b.dataset.tab === vestiging); });
+    helften.forEach(function(h){
+      var mijn = h.dataset.vestiging === vestiging;
+      h.classList.toggle("actief", mijn && bron !== "tab");
+      h.classList.toggle("mob-zichtbaar", mijn);
+    });
+  }
+
+  wisselKnoppen.forEach(function(b){
+    b.addEventListener("click", function(){ kies(b.dataset.vestiging, "balk"); });
+  });
+  tabKnoppen.forEach(function(b){
+    b.addEventListener("click", function(){ kies(b.dataset.tab, "tab"); });
+  });
+  helften.forEach(function(h){
+    h.addEventListener("mouseenter", function(){ kies(h.dataset.vestiging, "hover"); });
+    h.addEventListener("click", function(e){
+      if (e.target.closest("a")) return;
+      kies(h.dataset.vestiging, "klik");
+    });
+  });
+
+  /* ---------- sticky balk: direct zichtbaar, weg bij eigen CTA's, auto-hide bij omlaag scrollen ---------- */
+  var stickybar = document.getElementById("stickybar");
+  var vorigeY = window.scrollY;
+  var scrolltOmlaag = false;
+  var overlapSet = new Set();
+
+  function voorbijHero(){
+    /* hero heeft eigen CTA's + scroll-cue; balk pas na het doek */
+    return window.scrollY > window.innerHeight * 0.55;
+  }
+  function toonBalk(){
+    stickybar.classList.toggle("zichtbaar", voorbijHero() && overlapSet.size === 0 && !scrolltOmlaag);
+  }
+  window.addEventListener("scroll", function(){
+    var y = window.scrollY;
+    if (y > vorigeY + 6) scrolltOmlaag = true;
+    else if (y < vorigeY - 6) scrolltOmlaag = false;
+    if (y < 40) scrolltOmlaag = false;
+    vorigeY = y;
+    toonBalk();
+  }, { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    var vrijeZones = document.querySelectorAll(".helft-acties, .applaus-knoppen, .applaus-bellen, footer");
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) overlapSet.add(e.target); else overlapSet.delete(e.target);
+      });
+      toonBalk();
+    }, { threshold: 0.05 });
+    vrijeZones.forEach(function(z){ io.observe(z); });
+  }
+  toonBalk();
+
+  /* ---------- GSAP-dramaturgie (met nette fallback als CDN faalt) ---------- */
+  if (!window.gsap || !window.ScrollTrigger) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  var mm = gsap.matchMedia();
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) return;
+
+  /* Scène 1 — het doek trekt omhoog weg */
+  gsap.to("#curtain", {
+    yPercent: -100,
+    ease: "none",
+    scrollTrigger: {
+      trigger: "#doek",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.6
+    }
+  });
+  /* drempel-trigger i.p.v. scrub: kop is altijd óf weg óf volledig leesbaar */
+  gsap.from(".doek-stage .scene-nr, .doek-stage .stage-titel, .doek-stage .stage-sub", {
+    opacity: 0, y: 26, stagger: 0.1, duration: 0.8, ease: "power2.out",
+    scrollTrigger: {
+      trigger: "#doek",
+      start: "30% top",
+      toggleActions: "play none none reverse"
+    }
+  });
+
+  /* Scène 2 — de naad groeit, de helften schuiven binnen (alleen desktop) */
+  gsap.from("#naad", {
+    scaleY: 0, ease: "none",
+    scrollTrigger: { trigger: "#naad", start: "top 88%", end: "top 55%", scrub: true }
+  });
+
+  mm.add("(min-width: 761px)", function(){
+    gsap.from("#helft-centrum", {
+      xPercent: -40, opacity: 0, ease: "power2.out", duration: 0.9,
+      scrollTrigger: { trigger: ".split-stage", start: "top 82%" }
+    });
+    gsap.from("#helft-zuiderpoort", {
+      xPercent: 40, opacity: 0, ease: "power2.out", duration: 0.9,
+      scrollTrigger: { trigger: ".split-stage", start: "top 82%" }
+    });
+  });
+
+  /* Scène 3 — programmanummers druppelen binnen */
+  gsap.utils.toArray("#menukaart .akte").forEach(function(akte){
+    gsap.from(akte.querySelectorAll(".akte-kop, .nummer"), {
+      opacity: 0, y: 24, stagger: 0.07, duration: 0.7, ease: "power2.out",
+      scrollTrigger: { trigger: akte, start: "top 82%" }
+    });
+  });
+
+  /* Scène 4 — de rode zaal komt op */
+  gsap.from("#praktisch .prak-regel, #praktisch .kolom", {
+    opacity: 0, y: 30, stagger: 0.1, duration: 0.8, ease: "power2.out",
+    scrollTrigger: { trigger: "#praktisch", start: "top 70%" }
+  });
+
+  /* Scène 5 — applaus: de scores zwellen aan */
+  gsap.from("#applaus .recensie", {
+    opacity: 0, scale: 0.82, y: 24, stagger: 0.15, duration: 0.9, ease: "back.out(1.4)",
+    scrollTrigger: { trigger: "#applaus", start: "top 60%" }
+  });
+  gsap.from("#applaus .applaus-knoppen .knop, #applaus .applaus-bellen", {
+    opacity: 0, y: 20, stagger: 0.1, duration: 0.7, ease: "power2.out",
+    scrollTrigger: { trigger: "#applaus .applaus-knoppen", start: "top 85%" }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "concept": "La Linea Rossa",
+  "een_zin": "Eén doorlopende rode lijn — het rood uit het echte Milano-logo (#D8222A) — neemt je als verteller mee van binnenkomst tot afspraak, zoals één knipbeurt van begin tot eind.",
+  "bron": "Gedistilleerd uit het echte logo (rode swoosh), de merknaam (Milano → Italiaans lint/linea) en de merkkleur #D8222A op wit. Goedgekeurd door Jay 2026-07-02 (drafts/WOW-PLAN.md).",
+  "verteller": {
+    "wat": "De rode lijn. Elke scène heeft precies één lijn-gebaar (THE FORM: max één subtiel gebaar per scène, nooit door tekst).",
+    "doorlopend": "Desktop: SVG-boog in scène 1 die vertrekt vanaf de swoosh van het logo. Daarna per scène een inline rood accent dat dezelfde lijn 'is': s2 verbindingsstrepen tussen de haltes, s3 onderstreping onder 'voldoende', s4 accent bij de vestigingen, s5 de rode punt als eindpunt van de lijn.",
+    "mobiel": "Stage-SVG uit (slice-crop); de inline accenten dragen de verteller."
+  },
+  "scenes": [
+    { "nr": 1, "naam": "Entree", "hoofdrolspeler": "Het echte logo — de lijn schrijft het logo (wipe-reveal 1,8s), vertrekt dan als boog uit de swoosh", "lijn_gebaar": "desktop: boog door lege ruimte; mobiel: swoosh-lijn tekent zich onder de kop" },
+    { "nr": 2, "naam": "Het ritueel (zo simpel is het)", "hoofdrolspeler": "De klant: binnenlopen → zitten → klaar", "lijn_gebaar": "strepen die de drie haltes verbinden (de lijn loopt door)" },
+    { "nr": 3, "naam": "Applaus (bewijs vóór de vraag)", "hoofdrolspeler": "261 echte Google-reviews (4,7 Centrum / 4,8 Zuiderpoort)", "lijn_gebaar": "rode onderstreping tekent zichzelf onder 'voldoende'" },
+    { "nr": 4, "naam": "Twee salons (vestigingen)", "hoofdrolspeler": "De twee echte vestigingen, elk met eigen uren en telefoon", "lijn_gebaar": "de lijn splitst zich in tweeën naar de twee salons (SVG, scroll-getekend, desktop én mobiel)" },
+    { "nr": 5, "naam": "Il menu + finale", "hoofdrolspeler": "De echte prijslijst (Salonized) + Maak afspraak", "lijn_gebaar": "de lijn eindigt als rode punt: einde van de knipbeurt, begin van de afspraak" }
+  ],
+  "wow_momenten_goedgekeurd": {
+    "opening": "GEBOUWD (v5): de lijn schrijft het echte logo — wipe-reveal in schrijfrichting (1,8s); MILANO opnieuw laten schrijven zou het logo dupliceren (logo bevat de tekst al).",
+    "money_shot": "Replicate-lint-clip bij de splitsing (assets/linea-web.mp4 bestaat) — pas inbouwen NA Jay's keuring tegen de lat in WOW-PLAN; keuring niet gelogd, dus NIET ingebouwd.",
+    "micro": "GEBOUWD (v5): prijsregels worden regel-voor-regel 'geknipt' onthuld (clip-path links→rechts), subtiel, één keer, scrub-proof."
+  },
+  "regels": {
+    "fotos": "photos.approved leeg + mode no-photos → sfeer-route: abstract Replicate-decor in brandkleuren, géén nep-interieurs, géén verzonnen beeld.",
+    "taal": "Nederlands, je/jij, warm, lokaal (Wijchen).",
+    "kleuren": "#D8222A / #C21F26 op wit/papier — nooit donker/goud.",
+    "verboden": "geen verzonnen feiten, geen nep-interieurs, geen effect-grabbag; alles dient de lijn."
+  },
+  "gemaakt": "2026-07-03"
+}

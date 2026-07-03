@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "slug": "milano",
+    "schema_version": 2,
+    "source": "scraped from kapsalonmilano.nl 2026-07-01"
+  },
+  "identity": {
+    "name": "Kapsalon Milano",
+    "category": "Kapsalon",
+    "language": "nl",
+    "tagline": "Een goede kapper in Wijchen — met en zonder afspraak.",
+    "logo": "assets/logo-vrij.png",
+    "logo_note": "vrijstaande variant (transparant, 2400px) van het echte logo; origineel bestand: assets/logo.png"
+  },
+  "brand": {
+    "colors": [
+      "#D8222A",
+      "#C21F26",
+      "#FFFFFF"
+    ],
+    "voice_tone": [
+      "informeel",
+      "warm",
+      "lokaal",
+      "je/jij"
+    ]
+  },
+  "locations": [
+    {
+      "id": "centrum",
+      "label": "Milano Centrum",
+      "address": "Spoorstraat 27, 6602 AV Wijchen",
+      "phone": "06-18486557",
+      "email": "centrum@kapsalonmilano.nl",
+      "hours": {
+        "ma": "gesloten",
+        "di": "08:30-18:00",
+        "wo": "08:30-18:00",
+        "do": "08:30-18:00",
+        "vr": "08:30-20:00",
+        "za": "08:30-17:00",
+        "zo": "gesloten"
+      },
+      "is_primary": true
+    },
+    {
+      "id": "zuiderpoort",
+      "label": "Milano Zuiderpoort",
+      "address": "Zuiderpoort 19B, 6605 HM Wijchen",
+      "phone": "024-8441193",
+      "phone_mobile": "06-29544449",
+      "email": "zuiderpoort@kapsalonmilano.nl",
+      "hours": {
+        "ma": "13:00-19:00",
+        "di": "09:30-19:00",
+        "wo": "09:30-19:00",
+        "do": "09:30-19:00",
+        "vr": "09:30-20:00",
+        "za": "09:30-18:00",
+        "zo": "gesloten"
+      },
+      "is_primary": false
+    }
+  ],
+  "services": {
+    "source": "prijslijst aangeleverd door Jay (uit hun Salonized boekingssysteem), 2026-07-02 — ECHT, niet indicatief",
+    "groepen": [
+      {
+        "naam": "Heren",
+        "items": [
+          {
+            "dienst": "Knippen",
+            "duur_min": 30,
+            "prijs": 28.0
+          },
+          {
+            "dienst": "Knippen incl. wassen",
+            "duur_min": 30,
+            "prijs": 30.0
+          },
+          {
+            "dienst": "Knippen incl. baard scheren / trimmen",
+            "duur_min": 45,
+            "prijs": 48.0
+          },
+          {
+            "dienst": "Baard scheren / trimmen",
+            "duur_min": 15,
+            "prijs": 22.0
+          },
+          {
+            "dienst": "Geheel tondeuse",
+            "duur_min": 15,
+            "prijs": 15.0
+          }
+        ]
+      },
+      {
+        "naam": "Vrouwen",
+        "items": [
+          {
+            "dienst": "Knippen kort haar",
+            "duur_min": 30,
+            "prijs": 28.0
+          },
+          {
+            "dienst": "Knippen lang haar",
+            "duur_min": 30,
+            "prijs": 30.0
+          },
+          {
+            "dienst": "Wenkbrauwen epileren",
+            "duur_min": 15,
+            "prijs": 15.0
+          },
+          {
+            "dienst": "Geheel gezicht epileren",
+            "duur_min": 30,
+            "prijs": 27.0
+          }
+        ]
+      },
+      {
+        "naam": "Kinderen",
+        "items": [
+          {
+            "dienst": "Kinderen t/m 10 jaar — knippen",
+            "duur_min": 30,
+            "prijs": 23.0
+          }
+        ]
+      }
+    ]
+  },
+  "payment": {
+    "pin": true,
+    "creditcard": false,
+    "walk_in": true,
+    "appointment": true
+  },
+  "reviews": {
+    "google_centrum": {
+      "rating": 4.7,
+      "count": 118
+    },
+    "google_zuiderpoort": {
+      "rating": 4.8,
+      "count": 143
+    },
+    "source": "Google Places API 2026-07-01"
+  },
+  "booking": {
+    "system": "Salonized (by Treatwell)",
+    "widget": "widget.salonized.com/loader.js",
+    "where": "centrum.html + zuiderpoort.html (floating knop rechtsonder), NIET op homepage",
+    "note": "Maak afspraak = primaire route naast bellen; demo moet deze knop nadoen/linken",
+    "confirmed": "2026-07-02 door Jay + raw HTML check"
+  },
+  "socials": {
+    "facebook": "https://www.facebook.com/milanozuid"
+  },
+  "photos": {
+    "approved": [],
+    "mode": "no-photos",
+    "note": "alleen deze foto's gebruiken; leeg + mode no-photos = sfeer-route (géén nep-interieurs)",
+    "decided_by": "Jay",
+    "decided": "2026-07-02"
+  },
+  "_review_queue": [
+    "reviews.* (via Places API, peildatum 2026-07-01)",
+    "photos[] (geen op hun site — via Places API of Facebook)"
+  ],
+  "site_structure": {
+    "homepage": "https://www.kapsalonmilano.nl/",
+    "type": "hub-and-spoke",
+    "nav": [
+      "Centrum→/centrum.html",
+      "Zuiderpoort→/zuiderpoort.html"
+    ],
+    "pages": [
+      {
+        "url": "/",
+        "title": "Kapsalon Milano",
+        "role": "home",
+        "summary": "Alleen een vestiging-kiezer: linkt door naar Centrum en Zuiderpoort. Geen diensten/uren op de homepage."
+      },
+      {
+        "url": "/centrum.html",
+        "title": "Vestiging Centrum",
+        "role": "branch",
+        "summary": "Spoorstraat 27; eigen uren (Ma dicht, Di-Do 8:30-18, Vr 8:30-20, Za 8:30-17); 06-18486557; met en zonder afspraak; pinnen (geen creditcard)."
+      },
+      {
+        "url": "/zuiderpoort.html",
+        "title": "Vestiging Zuiderpoort",
+        "role": "branch",
+        "summary": "Zuiderpoort 19B; eigen uren (Ma 13-19, Di-Do 9:30-19, Vr 9:30-20, Za 9:30-18); 024-8441193 / 06-29544449; met en zonder afspraak; pinnen."
+      }
+    ],
+    "notes": "Homepage is puur een branch-picker → 2 aparte vestiging-pagina's, elk met EIGEN uren/telefoon. Rebuild moet beide vestigingen apart tonen (niet samenvoegen). Bron: scrape 2026-07-01."
+  },
+  "_alt_phone": "024-8441193",
+  "_facebook": "https://facebook.com/milanozuid"
+}

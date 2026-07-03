@@ -1,0 +1,306 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════
+BLOK 01 — TONEEL-STAGE (gepind toneel met scène-wissels)
+Bewezen in: clients/milano/drafts/site-v15-toneel-jay.html (THE FORM)
+
+WAT IS DIT?
+De hele site is ÉÉN kamer (100svh, gepind). Scrollen wisselt de scènes
+BINNEN die kamer met rustige crossfades. Er zijn rustpunten (snap) op het
+moment dat een scène COMPLEET is — nooit op scène-starts. Rechts staan
+voortgangsstipjes. NOOIT eindeloos gestapelde secties.
+
+ZO GEBRUIK JE HET (3 stappen):
+1. Zet je scènes als <section class="scene" data-scene="N"> in #stage.
+   De machine telt zelf hoeveel scènes er zijn — niets hardcoden.
+2. Per scène schrijf je (optioneel) één callback:
+      window.SCENES[N] = function(p, gsap){ ... }
+   p loopt van 0 → 1 binnen die scène. Gebruik gsap.set (deterministisch,
+   scrub-proof: heen én terug scrollen ziet er goed uit).
+   TRUC: laat alle onthullingen klaar zijn op p=0.6 (gebruik comp(p)),
+   want het snap-rustpunt ligt op p≈0.7 — dan staat alles al netjes.
+3. Pas de kleuren/fonts aan via de CSS-variabelen in :root hieronder.
+
+VEREIST: GSAP + ScrollTrigger (CDN staat onderaan).
+VALT NETJES TERUG: geen GSAP of prefers-reduced-motion → gewone pagina
+onder elkaar (class "statisch" op <html>), alles zichtbaar.
+
+REGELS (uit AGENTS.md — niet negeren):
+- Motion traag en fysiek: duur ≥ 600ms, verplaatsing ≤ 40px, ease-out.
+- Max ÉÉN klein lijn-gebaar per scène, nooit door tekst heen.
+- Scène-volgorde: entree → belofte → BEWIJS → aanbod → prijzen → finale.
+- Echte data uit business.json. NOOIT verzinnen.
+═══════════════════════════════════════════════════════════════════════════
+-->
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blok 01 — Toneel-stage</title>
+<style>
+/* ── DRAAIKNOPPEN: pas alleen dit aan per klant ───────────────────────── */
+:root{
+  --kleur-accent:#D8222A;        /* de merk-kleur (uit business.json)      */
+  --kleur-accent-donker:#C21F26; /* iets donkerder, voor hover             */
+  --kleur-papier:#FEFCFA;        /* achtergrond (licht, kalm)              */
+  --kleur-inkt:#1C1917;          /* tekstkleur                             */
+  --kleur-grijs:#6B6560;         /* stille tekst                           */
+  --font-display:Georgia,serif;  /* VERVANG door de display-font v/d klant */
+  --font-text:-apple-system,'Helvetica Neue',sans-serif; /* tekst-font    */
+  --ease-zacht:cubic-bezier(.4,0,.2,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--kleur-papier);color:var(--kleur-inkt);
+  font-family:var(--font-text);font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased}
+
+/* ── het toneel zelf ─────────────────────────────────────────────────────
+   #stage-wrap krijgt zijn hoogte via JS: (aantal scènes + 1) × 100svh.
+   #stage wordt gepind en blijft precies één schermvullende kamer.       */
+#stage-wrap{height:600svh}
+#stage{position:relative;height:100svh;overflow:hidden;background:var(--kleur-papier)}
+
+/* zachte gloed in de hoek — sfeer, geen hoofdrolspeler */
+#gloed{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(55% 45% at 82% 10%,
+    color-mix(in srgb, var(--kleur-accent) 5%, transparent), transparent 70%)}
+
+/* scènes liggen op elkaar gestapeld; alleen de actieve mag klikken */
+.scene{position:absolute;inset:0;z-index:10;opacity:0;pointer-events:none;
+  display:grid;place-items:center;padding:clamp(24px,5vw,64px)}
+.scene.is-active{pointer-events:auto}
+.scene[data-scene="1"]{opacity:1} /* scène 1 staat direct klaar bij load */
+
+/* decor-video ACHTER de inhoud (Replicate-decor, door Jay gekozen) */
+.decor-video{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;z-index:0;pointer-events:none;opacity:.28}
+.scene > *:not(.decor-video){position:relative;z-index:1}
+
+/* ── voortgangsstipjes (rechts, midden) ──────────────────────────────── */
+#dots{position:fixed;right:8px;top:50%;transform:translateY(-50%);z-index:50;
+  display:flex;flex-direction:column;gap:2px}
+#dots button{appearance:none;border:0;background:transparent;
+  width:40px;height:40px;padding:0;display:grid;place-items:center;cursor:pointer}
+#dots button::before{content:"";width:8px;height:8px;border-radius:50%;
+  background:color-mix(in srgb, var(--kleur-accent) 25%, transparent);
+  transition:transform .3s var(--ease-zacht),background .3s var(--ease-zacht)}
+#dots button.actief::before{background:var(--kleur-accent);transform:scale(1.4)}
+
+/* ── mobiel ──────────────────────────────────────────────────────────── */
+@media (max-width:640px){
+  #dots{right:2px;gap:0}
+  .decor-video{opacity:.22}
+  .scene{padding-bottom:88px} /* ruimte voor de mobiele sticky balk (blok 02) */
+}
+
+/* ── statische route: reduced-motion of GSAP-CDN faalt ───────────────────
+   Toneel uit; alle scènes gewoon onder elkaar als nette pagina.         */
+@media (prefers-reduced-motion: reduce){
+  #stage-wrap{height:auto}
+  #stage{height:auto;overflow:visible}
+  .scene{position:static;opacity:1;pointer-events:auto;min-height:0;
+    padding-top:96px;padding-bottom:64px}
+  #dots,#gloed{display:none}
+}
+.statisch #stage-wrap{height:auto}
+.statisch #stage{height:auto;overflow:visible}
+.statisch .scene{position:static;opacity:1 !important;transform:none !important;
+  pointer-events:auto;min-height:0;padding-top:96px;padding-bottom:64px}
+.statisch #dots,.statisch #gloed{display:none}
+
+/* alleen voor deze demo — weg wanneer je echte scène-inhoud plaatst */
+.demo-inhoud{text-align:center;max-width:640px}
+.demo-inhoud h2{font-family:var(--font-display);font-weight:600;
+  font-size:clamp(26px,3vw,36px);margin:0 0 10px}
+.demo-inhoud p{color:var(--kleur-grijs);margin:0}
+</style>
+</head>
+<body>
+
+<div id="stage-wrap">
+  <div id="stage">
+    <div id="gloed" aria-hidden="true"></div>
+
+    <!-- VERVANG de demo-inhoud hieronder door echte scènes.
+         Volgorde (THE FORM): entree → belofte → bewijs → aanbod → prijzen/finale.
+         Een decor-video zet je zo IN een scène (achter de inhoud):
+         <video class="decor-video" src="..." poster="..." autoplay muted loop playsinline aria-hidden="true"></video>
+    -->
+    <section class="scene is-active" data-scene="1" aria-label="Scène 1">
+      <div class="demo-inhoud"><h2>Scène 1 — entree</h2><p>Merk-binnenkomst. Logo, één zin, scroll-hint.</p></div>
+    </section>
+    <section class="scene" data-scene="2" aria-label="Scène 2">
+      <div class="demo-inhoud"><h2>Scène 2 — belofte</h2><p>Wat de klant hier komt halen, in gewone taal.</p></div>
+    </section>
+    <section class="scene" data-scene="3" aria-label="Scène 3">
+      <div class="demo-inhoud"><h2>Scène 3 — bewijs</h2><p>Echte reviews VÓÓR de vraag. Zie blok 04.</p></div>
+    </section>
+    <section class="scene" data-scene="4" aria-label="Scène 4">
+      <div class="demo-inhoud"><h2>Scène 4 — aanbod</h2><p>Vestigingen / diensten met echte knoppen.</p></div>
+    </section>
+    <section class="scene" data-scene="5" aria-label="Scène 5">
+      <div class="demo-inhoud"><h2>Scène 5 — finale</h2><p>Prijzen (blok 03) + de afspraak-vraag.</p></div>
+    </section>
+  </div>
+</div>
+
+<!-- de stipjes worden door de machine gevuld — leeg laten -->
+<nav id="dots" aria-label="Scènes"></nav>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ── TONEEL-MACHINE ────────────────────────────────────────────────────────
+   Roept window.SCENES[n](progress, gsap) aan; progress = 0..1 binnen scène n.
+   Alles deterministisch (gsap.set) zodat terug-scrollen ook klopt.        */
+(function () {
+  'use strict';
+  window.SCENES = window.SCENES || {};
+
+  /* hulpjes voor scène-callbacks — gebruik deze, verzin geen eigen easing */
+  /* frac: knip p naar een deel-venster (a..b) en maak er 0..1 van, ease-out */
+  window.frac = function (p, a, b) {
+    var t = (p - a) / (b - a);
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    return 1 - (1 - t) * (1 - t);
+  };
+  /* comp: pers alle reveals in p 0–0.6 — op het snap-rustpunt is alles af */
+  window.comp = function (p) { return p < 0.6 ? p / 0.6 : 1; };
+  /* fadeUp: het standaard-onthul-gebaar (zacht omhoog + opacity)          */
+  window.fadeUp = function (gsap, el, p, a, b) {
+    if (!el) return;
+    var t = window.frac(p, a, b);
+    gsap.set(el, { opacity: t, y: 20 * (1 - t) });
+  };
+
+  var reduceer = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function init() {
+    var scenesEls = Array.prototype.slice.call(document.querySelectorAll('#stage .scene'));
+    var N = scenesEls.length;
+    var wrap = document.getElementById('stage-wrap');
+    var dotsNav = document.getElementById('dots');
+
+    /* stipjes automatisch aanmaken — één per scène */
+    scenesEls.forEach(function (sc, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', sc.getAttribute('aria-label') || ('Scène ' + (i + 1)));
+      if (i === 0) b.classList.add('actief');
+      dotsNav.appendChild(b);
+    });
+    var dots = Array.prototype.slice.call(dotsNav.querySelectorAll('button'));
+
+    /* geen GSAP of reduced-motion? → statische nette pagina, klaar. */
+    if (reduceer.matches || !window.gsap || !window.ScrollTrigger) {
+      document.documentElement.classList.add('statisch');
+      scenesEls.forEach(function (sc) { sc.classList.add('is-active'); });
+      document.querySelectorAll('.decor-video').forEach(function (v) {
+        v.removeAttribute('autoplay');
+        var stop = function () { v.pause(); };
+        v.addEventListener('loadeddata', stop); stop();
+      });
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* scrollruimte: 100svh per scène + 100svh uitloop */
+    wrap.style.height = ((N + 1) * 100) + 'svh';
+
+    var tl = gsap.timeline({ defaults: { ease: 'power1.inOut' } });
+    tl.set({ _pad: 0 }, { _pad: 0 }, N); /* totale duur = N (1 per scène) */
+
+    /* crossfades tussen scènes + de scène-callbacks via een proxy */
+    scenesEls.forEach(function (sc, idx) {
+      var i = idx + 1;
+      if (i > 1) {
+        tl.to(scenesEls[idx - 1], { opacity: 0, y: -18, duration: 0.15 }, i - 1);
+        tl.fromTo(sc, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.15 }, i - 1);
+      }
+      if (typeof window.SCENES[i] === 'function') {
+        var proxy = { p: 0 };
+        tl.to(proxy, {
+          p: 1, duration: 1, ease: 'none',
+          onUpdate: function () { window.SCENES[i](proxy.p, gsap); }
+        }, i - 1);
+      }
+    });
+
+    /* scène 1 mag zijn intro direct bij load doen (geen scroll nodig) */
+    if (typeof window.SCENES[1] === 'function') window.SCENES[1](0, gsap);
+
+    /* welke scène is 'aan' + stipje bijkleuren */
+    function zetActief(idx) {
+      scenesEls.forEach(function (sc, k) { sc.classList.toggle('is-active', k === idx); });
+      dots.forEach(function (d, k) { d.classList.toggle('actief', k === idx); });
+    }
+    zetActief(0);
+
+    /* SNAP-OP-COMPLEET: rustpunten liggen op (i − 0.3) / N — het moment dat
+       een scène AF is (want reveals klaar op p=0.6) — nooit op scène-starts */
+    var snapPunten = [0];
+    for (var i = 1; i <= N; i++) snapPunten.push((i - 0.3) / N);
+    snapPunten.push(1);
+
+    var st = ScrollTrigger.create({
+      trigger: '#stage-wrap',
+      start: 'top top',
+      end: '+=' + (N * 100) + '%',
+      pin: '#stage',
+      scrub: 0.8,
+      anticipatePin: 1,
+      animation: tl,
+      snap: {
+        snapTo: snapPunten,
+        directional: false,
+        inertia: false,
+        duration: { min: 0.6, max: 0.9 }, /* traag en fysiek, ≥600ms */
+        ease: 'power2.inOut',
+        delay: 0.15
+      },
+      onUpdate: function (self) {
+        var idx = Math.max(0, Math.min(N - 1, Math.floor(self.progress * N)));
+        zetActief(idx);
+      },
+      onLeave: function ()   { gsap.to('#dots', { autoAlpha: 0, duration: 0.3, overwrite: 'auto' }); },
+      onEnterBack: function(){ gsap.to('#dots', { autoAlpha: 1, duration: 0.3, overwrite: 'auto' }); }
+    });
+
+    /* klik op een stipje → scroll naar het rustpunt van die scène */
+    dots.forEach(function (d, idx) {
+      d.addEventListener('click', function () {
+        var y = st.start + (st.end - st.start) * ((idx + 0.7) / N);
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+    });
+
+    /* na load/resize opnieuw meten */
+    window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+    var rTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(rTimer);
+      rTimer = setTimeout(function () { ScrollTrigger.refresh(); }, 150);
+    }, { passive: true });
+
+    window.TONEEL = { tl: tl, st: st, N: N };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+
+/* ── VOORBEELD-CALLBACK (verwijder / vervang per scène) ──────────────────
+   Zo onthul je inhoud binnen een scène. Alles klaar vóór het snap-punt. */
+window.SCENES[2] = function (p, gsap) {
+  var sc = document.querySelector('[data-scene="2"] .demo-inhoud');
+  if (!sc) return;
+  p = comp(p);
+  fadeUp(gsap, sc.querySelector('h2'), p, 0.05, 0.2);
+  fadeUp(gsap, sc.querySelector('p'),  p, 0.25, 0.45);
+};
+</script>
+</body>
+</html>

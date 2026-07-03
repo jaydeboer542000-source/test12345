@@ -1,0 +1,15 @@
+{"ts":"2026-07-01T15:23:20.586Z","stage":"sourced","msg":"lead gevonden via Places (kapper in Wijchen) — score 58","ok":true}
+{"ts":"2026-07-03T13:11:27.052Z","msg":"actie \"build\" (40s, $0.787)","ok":true}
+{"ts":"2026-07-03T13:12:02.462Z","msg":"foto-selectie: 0 foto's goedgekeurd","ok":true}
+{"ts":"2026-07-03T13:12:06.328Z","msg":"foto-selectie: 5 foto's goedgekeurd","ok":true}
+{"ts":"2026-07-03T13:10:00Z","stage":"available","msg":"WOW-machine gestart: concept.json geschreven. GESTOPT vóór build: geen photos-veld in business.json (Jay moet kiezen) + netwerk geblokkeerd dus site-mapper kon echte site niet crawlen.","ok":false}
+{"ts":"2026-07-03T13:12:46.142Z","msg":"actie \"build\" (237s, $2.578)","ok":true}
+{"ts":"2026-07-03T13:15:01.518Z","msg":"foto-selectie: 5 foto's goedgekeurd","ok":true}
+{"ts":"2026-07-03T13:15:02.313Z","msg":"foto-selectie: sfeer-route (geen foto's)","ok":true}
+{"ts":"2026-07-03T13:15:02.777Z","msg":"foto-selectie: 5 foto's goedgekeurd","ok":true}
+{"ts":"2026-07-03T13:15:03.215Z","msg":"foto-selectie: 5 foto's goedgekeurd","ok":true}
+{"ts":"2026-07-03T15:45:00.000Z","stage":"available","msg":"site.html v1 gebouwd (THE FORM, 4 scenes, echte fotos, verteller Voor jou); concept.json bijgewerkt na foto-goedkeuring; craft-lint/jury/QC geblokkeerd (geen uitvoerings-permissie in sessie), qc.pass=false","ok":false}
+{"ts":"2026-07-03T13:22:07.007Z","msg":"actie \"build\" (582s, $7.049)","ok":true}
+{"ts":"2026-07-03T13:40:00.000Z","stage":"available","msg":"WOW-machine ronde 2: v1 overgenomen, font-stack-lintfout + 20 juryfixes toegepast; code-jury 2 rondes alle lenzen >=8 (concept 8, typo 9, motion 8.5, data 9.5, mobiel 8.5) — VOORLOPIG want exec/screenshots geblokkeerd; qc.pass=false tot screenshot-jury + qc-client.sh in sessie met permissie.","ok":false}
+{"ts":"2026-07-03T13:35:56.345Z","msg":"actie \"build\" (1075s, $24.030)","ok":true}
+{"ts":"2026-07-03T15:09:47.671Z","msg":"poortwachter: AFGEKEURD — lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_2.jpg\" zit in een decor-laag (regel 228) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les). · lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_1.jpg\" zit in een decor-laag (regel 242) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les). · lint: Echte foto \"assets/scraped/Duo_4_you_hairstyling___Kapsalon_Wijchen_3.jpg\" zit in een decor-laag (regel 255) — foto-als-donker-behang is de standaard-template-fout; held-formule gebruiken (zie AGENTS.md Stijl-les).","ok":false}

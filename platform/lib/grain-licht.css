@@ -1,0 +1,197 @@
+/* ============================================================
+   KORREL-EN-LICHT-PAKKET  —  grain-licht.css
+   ------------------------------------------------------------
+   Wat is dit? Doorzichtige "vellen" die je bovenop een scene
+   legt, zoals kleurfolie op een lamp in het theater. Ze geven
+   filmkorrel, warm licht en papiergevoel — zonder plaatjes van
+   internet (alles zit als tekst in dit bestand).
+
+   HOE GEBRUIK JE HET (voor elke bouwer, ook een dom model):
+   1. Zet op de scene/sectie de class  fx-scene
+      (die zorgt dat de vellen precies over de scene passen).
+   2. Zet BINNENIN lege divs met  fx  + één effect-class:
+
+        <section class="hero fx-scene">
+          ...echte inhoud...
+          <div class="fx fx-grain"></div>
+          <div class="fx fx-venster"></div>
+          <div class="fx fx-vignette"></div>
+        </section>
+
+   3. Stapelen mag: elk vel is een eigen div, dus je kunt er
+      zoveel neerleggen als je wilt. Volgorde in de HTML =
+      volgorde van de stapel (laatste ligt bovenop).
+
+   VEILIG:
+   - Alle vellen hebben pointer-events: none → je kunt er
+     gewoon doorheen klikken en scrollen.
+   - Vellen zijn puur sfeer, NOOIT de hoofdrolspeler.
+   - prefers-reduced-motion → bewegende korrel staat stil.
+   - prefers-contrast: more → alle vellen gaan uit, zodat
+     tekst maximaal leesbaar blijft.
+   ============================================================ */
+
+
+/* ---------- 0. BASIS ---------------------------------------- */
+
+/* De scene zelf: het "toneel" waar de vellen op passen.
+   position:relative zodat de vellen (absolute) zich hieraan
+   vastklikken en niet aan de hele pagina. */
+.fx-scene {
+  position: relative;
+  /* isolation: eigen stapel-laag, zodat mix-blend-mode van de
+     vellen alleen mengt met DEZE scene en niet lekt naar de
+     rest van de pagina. */
+  isolation: isolate;
+}
+
+/* Elk vel: precies zo groot als de scene, klik-doorlaatbaar,
+   en het mag nooit de layout duwen. */
+.fx {
+  position: absolute;
+  inset: 0;                 /* plakt aan alle vier de randen */
+  pointer-events: none;     /* muis/vinger gaat er dwars doorheen */
+  user-select: none;
+  z-index: 5;               /* boven de foto's, onder eventuele
+                               UI die je zelf hoger zet */
+}
+
+
+/* ---------- 1. FILMKORREL  (.fx-grain) ----------------------- */
+/* Fijne ruis zoals op echte film. Gemaakt met een SVG-ruisje
+   dat als tekst (data-URI) in dit bestand zit — geen download.
+   Heel zacht: 5% zichtbaar, gemengd met "overlay" zodat het
+   in lichte én donkere delen natuurlijk oogt. */
+.fx-grain {
+  opacity: 0.05;                       /* blijf tussen 3% en 6% */
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;        /* tegeltje herhaalt vanzelf */
+}
+
+/* Iets sterkere korrel voor donkere avond-scenes (max 6%!). */
+.fx-grain--sterk { opacity: 0.06; }
+
+/* Extra zachte korrel voor lichte, kalme scenes. */
+.fx-grain--zacht { opacity: 0.03; }
+
+/* Bewegende korrel: het ruisje verspringt 8x per seconde,
+   zoals echte filmkorrel. Alleen als je dit BEWUST toevoegt:
+   <div class="fx fx-grain fx-grain--bewegend"></div> */
+.fx-grain--bewegend {
+  animation: fx-korrel-flikker 0.9s steps(8) infinite;
+}
+@keyframes fx-korrel-flikker {
+  /* We schuiven het tegeltje steeds een stukje op; door steps()
+     ziet dat eruit als verspringen, niet als glijden. */
+  0%   { background-position: 0 0; }
+  25%  { background-position: -60px 40px; }
+  50%  { background-position: 40px -80px; }
+  75%  { background-position: -80px -40px; }
+  100% { background-position: 60px 70px; }
+}
+
+
+/* ---------- 2. LICHT-VELLEN (3 stuks) ------------------------ */
+
+/* 2a. WARM VENSTER-LICHT LINKSBOVEN  (.fx-venster)
+   Alsof er zacht middaglicht door een raam linksboven valt.
+   Gebruik: geeft een foto of scene meteen "gouden uur"-gevoel. */
+.fx-venster {
+  background: radial-gradient(
+    120% 90% at 12% 0%,               /* lichtbron: linksboven */
+    rgba(255, 214, 156, 0.28) 0%,     /* warm goud in de hoek */
+    rgba(255, 214, 156, 0.10) 32%,    /* zacht uitvloeien */
+    rgba(255, 214, 156, 0.00) 62%     /* rest van de scene: niets */
+  );
+  mix-blend-mode: soft-light;         /* mengt vriendelijk met foto's */
+}
+
+/* Spiegel-variant: licht van rechtsboven (als de foto daarom vraagt). */
+.fx-venster--rechts {
+  background: radial-gradient(
+    120% 90% at 88% 0%,
+    rgba(255, 214, 156, 0.28) 0%,
+    rgba(255, 214, 156, 0.10) 32%,
+    rgba(255, 214, 156, 0.00) 62%
+  );
+}
+
+/* 2b. ZACHTE VIGNETTE  (.fx-vignette)
+   Randen ietsje donkerder, midden blijft open — zo kijkt het
+   oog vanzelf naar het midden, zoals in een bioscoop. */
+.fx-vignette {
+  background: radial-gradient(
+    130% 130% at 50% 45%,             /* open venster net boven het midden */
+    rgba(0, 0, 0, 0.00) 55%,          /* midden: helemaal vrij */
+    rgba(0, 0, 0, 0.10) 80%,
+    rgba(0, 0, 0, 0.22) 100%          /* hoeken: zachte schaduw */
+  );
+  /* géén blend-mode: gewone schaduw werkt hier het eerlijkst */
+}
+
+/* Lichte variant voor witte/lichte scenes (donkere vignette
+   oogt daar snel vies — deze is half zo sterk). */
+.fx-vignette--licht {
+  background: radial-gradient(
+    130% 130% at 50% 45%,
+    rgba(0, 0, 0, 0.00) 60%,
+    rgba(0, 0, 0, 0.05) 82%,
+    rgba(0, 0, 0, 0.11) 100%
+  );
+}
+
+/* 2c. AVOND-GLOED  (.fx-avond)
+   Warme gloed die van onderaf omhoog kruipt, als lantaarnlicht
+   of kaarslicht aan het eind van de dag. Voor slot-scenes,
+   booking-finales, restaurants 's avonds. */
+.fx-avond {
+  background:
+    /* warme onderkant */
+    linear-gradient(
+      to top,
+      rgba(255, 148, 84, 0.20) 0%,
+      rgba(255, 148, 84, 0.07) 30%,
+      rgba(255, 148, 84, 0.00) 58%
+    ),
+    /* plus een klein warm brandpunt onderin het midden */
+    radial-gradient(
+      90% 55% at 50% 100%,
+      rgba(255, 120, 60, 0.14) 0%,
+      rgba(255, 120, 60, 0.00) 70%
+    );
+  mix-blend-mode: soft-light;
+}
+
+
+/* ---------- 3. PAPIER-TEXTUUR  (.fx-papier) ------------------ */
+/* Heel fijn vezeltje, alsof de scene op mooi mat papier is
+   gedrukt. Vooral fijn op lichte/kalme secties (prijzen, tekst).
+   Grover ruisje dan de filmkorrel + multiply = drukwerk-gevoel. */
+.fx-papier {
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04 0.18' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-size: 320px 320px;
+  /* baseFrequency is expres ongelijk (0.04 vs 0.18): dat geeft
+     langgerekte vezels zoals in echt papier, geen tv-ruis. */
+}
+
+
+/* ---------- 4. RESPECT VOOR DE BEZOEKER ---------------------- */
+
+/* Iemand die "minder beweging" heeft aangezet:
+   de korrel staat gewoon stil (alle sfeer blijft, niets flikkert). */
+@media (prefers-reduced-motion: reduce) {
+  .fx-grain--bewegend {
+    animation: none;
+  }
+}
+
+/* Iemand die "meer contrast" heeft aangezet:
+   alle sfeervellen uit. Leesbaarheid wint ALTIJD van sfeer. */
+@media (prefers-contrast: more) {
+  .fx {
+    display: none;
+  }
+}

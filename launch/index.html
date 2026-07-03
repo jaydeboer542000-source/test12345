@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Jay de Boer — cinematic web sections</title>
+<meta name="description" content="I make websites that move like a movie. Get a free cinematic web section." />
+<!-- premium fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..560&family=Inter:wght@500;600&display=swap" rel="stylesheet" />
+<!-- MailerLite Universal (e-mail opvangen) -->
+<script>
+    (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+    .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+    n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+    (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+    ml('account', '2478661');
+</script>
+<!-- DE MACHINE (looks) -->
+<link rel="stylesheet" href="engine.css" />
+<!-- DE LANDING-LAAG (offer bovenop de sectie) -->
+<link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+  <!-- de cinematische sectie (eye candy) -->
+  <div class="carousel" id="carousel"><div class="track" id="track"></div></div>
+  <div class="scrim"></div>
+  <div class="brand" id="brand"></div>
+  <div class="arrow prev" id="prev">‹</div>
+  <div class="arrow next" id="next">›</div>
+  <div class="hint">Swipe / ← →</div>
+  <div class="dots" id="dots"></div>
+
+  <!-- ===== LANDING-OVERLAY (de funnel) ===== -->
+  <!-- maker-mark linksboven: een persoon, geen horlogemerk -->
+  <div class="makermark">
+    <span class="mm-name">Jay de Boer</span>
+    <span class="mm-dot">•</span>
+    <span class="mm-sub">Cinematic Web Design</span>
+  </div>
+  <!-- horloge blijft demo, geen echt merk -->
+  <div class="demo-tag">AURELIAN — fictional demo brand</div>
+
+  <!-- offer-blok linksonder: één kop, één knop, één taak -->
+  <!-- vaste CTA-balk: één knop op elke scene (opent het paneel). Op de laatste wereld komt er een pitch-regel boven. -->
+  <div class="cta-bar">
+    <button class="cta-pill" id="openPanel" type="button">Get the free section →</button>
+  </div>
+
+  <!-- ===== SIGNUP-PANEEL (opent op knop; carousel blijft heel) ===== -->
+  <div class="panel-backdrop" id="panelBackdrop" hidden>
+    <div class="panel-card" role="dialog" aria-modal="true" aria-label="Get the free cinematic section">
+      <button class="panel-close" id="closePanel" type="button" aria-label="Close">×</button>
+      <p class="panel-mark">Jay de Boer • Cinematic Web Design</p>
+      <h2 class="panel-title">Your free cinematic section</h2>
+      <p class="panel-value">Drop it into your own site, swap in your product — no code needed. Yours to keep.</p>
+      <!-- MailerLite-formulier (vooraf geladen, herstijld via landing.css) -->
+      <div class="ml-embedded" data-form="KyKPjd"></div>
+      <p class="panel-note">No spam, ever.</p>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="engine.js"></script>
+  <script src="landing.js"></script>
+</body>
+</html>

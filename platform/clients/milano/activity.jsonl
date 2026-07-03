@@ -1,0 +1,32 @@
+{"ts":"2026-07-01T11:40:00Z","stage":"intake","msg":"Nieuwe lead aangemaakt: Kapsalon Milano (barbershop). Bron: handmatige intake.","ok":true}
+{"ts":"2026-07-01T11:43:12Z","stage":"harvest-facts","msg":"Bedrijfsgegevens verzameld: naam, adres, telefoon, diensten en openingstijden gescraped naar business.json.","ok":true}
+{"ts":"2026-07-01T11:45:30Z","stage":"harvest-images","msg":"Geen bruikbare eigen foto's gevonden — placeholder-slots ingevuld (src=\"\"), license demo-only.","ok":true}
+{"ts":"2026-07-01T11:48:05Z","stage":"build-config","msg":"business.json gevalideerd tegen schema en omgezet naar site-config.","ok":true}
+{"ts":"2026-07-01T11:52:47Z","stage":"render","msg":"Cinematic demo-site gerenderd naar clients/milano/site.html (self-contained).","ok":true}
+{"ts":"2026-07-01T11:54:10Z","stage":"qc-gate","msg":"QC geslaagd: pagina laadt, mobiel + desktop OK. Let op: placeholder-foto's, openingstijden nog bevestigen.","ok":true}
+{"ts":"2026-07-01T11:54:15Z","stage":"demo_built","msg":"Stage gezet op demo_built. Klaar om te versturen.","ok":true}
+{"ts":"2026-07-01T13:20:00Z","stage":"audit","msg":"ultracode-audit: demo fout (goud/Engels/verzonnen data/geen foto's)","ok":false}
+{"ts":"2026-07-01T13:22:00Z","stage":"harvest-facts","msg":"echte data gescraped: beide vestigingen, uren, telefoons, kleur rood #D8222A, taal NL","ok":true}
+{"ts":"2026-07-01T13:24:00Z","stage":"build-config","msg":"business.json herbouwd uit alleen echte data; verzinsels verwijderd","ok":true}
+{"ts":"2026-07-01T13:25:00Z","stage":"render","msg":"site herbouwd: rood/wit, Nederlands, echte uren, open-nu-logica, foto-placeholders","ok":true}
+{"ts":"2026-07-01T13:26:00Z","stage":"qc-gate","msg":"QC: fail-closed — echte foto's ontbreken (Places API-key nodig)","ok":false}
+{"ts":"2026-07-01T13:40:00Z","stage":"harvest-images","msg":"Places API: echte foto opgehaald (Zuiderpoort) + echte reviews 4.8/143, 4.7/118","ok":true}
+{"ts":"2026-07-01T14:12:00Z","stage":"platform","msg":"lokaal servertje + AI-chat endpoint gebouwd; dashboard-AI leest echte files (getest: #D8222A/nl)","ok":true}
+{"ts":"2026-07-01T15:28:00Z","stage":"platform","msg":"lead-finder (10 Wijchense kappers) + before/after-slider gebouwd","ok":true}
+{"ts":"2026-07-02T17:10:00+02:00","stage":"demo_built","msg":"site.html herbouwd (cinematic-designer): 2 vestigingen apart, echte data, mobielbelbalk. Feiten-QC pass; visuele QC geblokkeerd (geen server-permissie) -> qc.pass=false","ok":true}
+{"ts":"2026-07-02T14:54:33.123Z","msg":"actie \"build\" (626s, $5.460)","ok":true}
+{"ts":"2026-07-02T15:22:30.868Z","msg":"foto-selectie: sfeer-route (geen foto's)","ok":true}
+{"ts":"2026-07-02T15:22:31.396Z","msg":"foto-selectie: 0 foto's goedgekeurd","ok":true}
+{"ts":"2026-07-02","stage":"demo_built","msg":"Outreach-concept geschreven: drafts/outreach_2026-07-02.md (niet verstuurd; wacht op QC pass + Jay review)","ok":true}
+{"ts":"2026-07-02T15:24:19.453Z","msg":"actie \"mail\" (76s, $1.148)","ok":true}
+{"ts":"2026-07-02T15:24:53.366Z","msg":"actie \"mail\" (92s, $1.227)","ok":true}
+{"ts":"2026-07-02T15:26:02Z","stage":"qc-gate","msg":"QC: fail-closed. Statisch: feiten/structuur/taal/brand/assets PASS. Blockers: hero = klant-selfie met maskerplekken (0 foto's goedgekeurd, Jay koos sfeer-route!), 'Maak afspraak'-knop ontbreekt, centrum-streetview toont geen Milano-gevel. Render-check (1440/390/console) opnieuw geblokkeerd (non-interactief).","ok":false}
+{"ts":"2026-07-02T15:27:36.356Z","msg":"actie \"qc\" (281s, $3.473)","ok":true}
+{"ts":"2026-07-02T15:35:43.300Z","msg":"foto-selectie: sfeer-route (geen foto's)","ok":true}
+{"ts": "2026-07-02T18:05:31.099089", "stage": "demo_built", "msg": "v3 team-build klaar \u2014 wacht op Jay's duim", "ok": true}
+{"ts":"2026-07-01T15:23:20.589Z","stage":"sourced","msg":"lead gevonden via Places (kapper in Wijchen) — score 66","ok":true}
+{"ts":"2026-07-02T12:21:26.237Z","msg":"actie \"mail\" (60s, $0.901)","ok":true}
+{"ts":"2026-07-03T10:25:00+02:00","stage":"demo_built","msg":"wow-machine v6: concept.json (La Linea Rossa) geschreven; jury-lus 3 rondes (code-review, geen screenshots mogelijk) — eind: concept 8, typo 8, motion 8, data 9.5, mobiel 8. Fixes: logo-schrijf-opening met penpunt, s4-splitslijn, s5 prijslijst-knip, mobiel scroll-vangnet, snap>=600ms, disclaimer bronvast. QC pass=false: echte screenshot-check geblokkeerd (non-interactief).","ok":true}
+{"ts":"2026-07-03T08:21:51.654Z","msg":"actie \"build\" (1146s, $20.934)","ok":true}
+{"ts": "2026-07-03T10:27:07.403323", "stage": "demo_built", "msg": "echte kijk-QC geslaagd na compositie-fixes \u2014 wacht op duim", "ok": true}
+{"ts":"2026-07-03T15:09:47.738Z","msg":"poortwachter: AFGEKEURD — lint: Echte foto \"assets/streetview_centrum.jpg\" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim. · lint: Echte foto \"assets/streetview_zuiderpoort.jpg\" is niet door Jay goedgekeurd (photo-picker) — gescrapete/Street View-foto's alleen ná de duim.","ok":false}

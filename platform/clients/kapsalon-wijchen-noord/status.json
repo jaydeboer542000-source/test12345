@@ -1,0 +1,23 @@
+{
+  "stage": "available",
+  "flags": {},
+  "lead": {
+    "success_probability": 54,
+    "band": "amber",
+    "budget": 0.49,
+    "need": 0.9,
+    "reach": 0.8,
+    "top_positive": [
+      "76 reviews",
+      "GEEN site"
+    ],
+    "top_blocker": "geen site → grote kans"
+  },
+  "qc": {
+    "pass": false,
+    "notes": [
+      "lead — nog geen demo"
+    ]
+  },
+  "updated": "2026-07-01T15:23:20.587Z"
+}

@@ -1,0 +1,25 @@
+{
+  "stage": "available",
+  "flags": {
+    "building": false
+  },
+  "lead": {
+    "success_probability": 59,
+    "band": "amber",
+    "budget": 0.58,
+    "need": 0.6,
+    "reach": 1,
+    "top_positive": [
+      "79 reviews",
+      "heeft site (verouderbaar)"
+    ],
+    "top_blocker": "site vervangen"
+  },
+  "qc": {
+    "pass": false,
+    "notes": [
+      "demo verwijderd op verzoek Jay 2026-07-02 \u2014 gebouwd zonder akkoord"
+    ]
+  },
+  "updated": "2026-07-02T16:30:42.648292"
+}

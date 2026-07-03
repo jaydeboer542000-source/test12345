@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "de-hoofdsalon",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "De Hoofdsalon",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "De Hoofdsalon",
+      "address": "Burchtstraat 12, 6602 AR Wijchen, Netherlands",
+      "phone": "024 641 4636"
+    }
+  ],
+  "contact": {
+    "website": "https://www.dehoofdsalon.nl/afspraak-maken/?y_source=1_MjQ4MzAwMi03MTUtbG9jYXRpb24ud2Vic2l0ZQ%3D%3D"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.4,
+      "count": 77
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "julie-tte-hairdressers-x-trendsetters",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "Juliëtte Hairdressers x Trendsetters ✂",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "Juliëtte Hairdressers x Trendsetters ✂",
+      "address": "Kasteellaan 5A, 6602 DA Wijchen, Netherlands",
+      "phone": "06 36274165"
+    }
+  ],
+  "contact": {
+    "website": "http://www.juliettehair.nl/"
+  },
+  "reviews": {
+    "google": {
+      "rating": 4.9,
+      "count": 43
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

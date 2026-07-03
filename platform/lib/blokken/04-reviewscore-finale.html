@@ -1,0 +1,168 @@
+<!--
+═══════════════════════════════════════════════════════════════════════════
+BLOK 04 — REVIEWSCORE-FINALE (het applaus / bewijs-moment)
+Bewezen in: clients/milano/site.html (scène "Applaus") +
+            clients/milano/drafts/site-v15-toneel-jay.html (scène 3)
+
+WAT IS DIT?
+Het bewijs-moment: grote echte reviewscores, gebracht als applaus.
+- Eén kop met ÉÉN onderstreept woord — de onderstreping tekent zichzelf
+  (SVG stroke-dash). Dat is het enige lijn-gebaar van deze scène.
+- Daaronder de score(s): groot serif-cijfer + ster + aantal stemmen.
+- Onderaan ALTIJD een bron-regel ("Bron: Google-reviews, maand jaar").
+
+ABSOLUTE REGEL (AGENTS.md #1): scores en aantallen zijn ECHT, uit
+business.json / Google Places. Score onbekend → dit blok WEGLATEN.
+Nooit tellen/oplopen met nep-tussenwaarden: het cijfer verschijnt exact.
+
+PLEK IN HET VERHAAL: bewijs komt VÓÓR de vraag (scène-volgorde THE FORM),
+dus dit blok vóór het aanbod/de prijzen — of als slot-finale vlak voor de
+laatste afspraak-knoppen.
+
+ZO GEBRUIK JE HET:
+1. Kopieer CSS + HTML, vul echte scores + aantallen + bron in.
+2. Eén locatie? Gebruik één .rs-score en verwijder de punt-spacer.
+3. Los: IntersectionObserver onthult alles (staat onderaan).
+   In het toneel (blok 01): verwijder het observer-script en stuur alles
+   vanuit je scène-callback (voorbeeld staat in het script).
+4. Kleuren/fonts via de CSS-variabelen.
+═══════════════════════════════════════════════════════════════════════════
+-->
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blok 04 — Reviewscore-finale</title>
+<style>
+/* ── DRAAIKNOPPEN ────────────────────────────────────────────────────── */
+:root{
+  --kleur-accent:#D8222A;
+  --kleur-inkt:#1C1917;
+  --kleur-grijs:#6B6560;
+  --font-display:Georgia,serif;   /* VERVANG door klant-display-font      */
+  --font-text:-apple-system,'Helvetica Neue',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--font-text);color:var(--kleur-inkt);
+  background:#FEFCFA;-webkit-font-smoothing:antialiased}
+
+/* ── de finale ───────────────────────────────────────────────────────── */
+.rs{min-height:60vh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;text-align:center;padding:64px 20px}
+.rs-kop{font-family:var(--font-display);font-weight:600;
+  font-size:clamp(30px,3.8vw,46px);line-height:1.25;max-width:700px;
+  margin:0 0 44px;opacity:0}
+/* het onderstreepte woord + de zelf-tekenende lijn eronder */
+.rs-onder{position:relative;display:inline-block}
+.rs-lijn{position:absolute;left:0;bottom:-6px;width:100%;height:14px;overflow:visible}
+.rs-lijn path{fill:none;stroke:var(--kleur-accent);stroke-width:3;
+  stroke-linecap:round;stroke-dasharray:230;stroke-dashoffset:230}
+
+.rs-scores{display:flex;align-items:center;justify-content:center;
+  gap:clamp(24px,6vw,64px);flex-wrap:wrap}
+.rs-score{opacity:0;margin:0}
+.rs-cijfer{font-family:var(--font-display);font-weight:700;line-height:1;
+  font-size:clamp(3rem,7vw,5rem)}
+.rs-cijfer .ster{color:var(--kleur-accent);font-size:.55em;
+  vertical-align:.32em;margin-right:.12em}
+.rs-stemmen{margin-top:.5rem;font-size:.78rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--kleur-grijs);font-weight:500}
+.rs-punt{width:5px;height:5px;border-radius:50%;background:var(--kleur-accent);flex:none}
+.rs-bron{font-size:13px;color:var(--kleur-grijs);margin:28px 0 0;opacity:0}
+
+@media (max-width:640px){
+  .rs-kop{margin-bottom:32px}
+  .rs-scores{flex-direction:column;gap:22px}
+  .rs-punt{display:none}
+  .rs-cijfer{font-size:3.2rem}
+}
+/* reduced-motion: alles direct zichtbaar, lijn getekend */
+@media (prefers-reduced-motion: reduce){
+  .rs-kop,.rs-score,.rs-bron{opacity:1 !important;transform:none !important}
+  .rs-lijn path{stroke-dashoffset:0 !important}
+}
+</style>
+</head>
+<body>
+
+<!-- VERVANG kop, scores, aantallen en bron door ECHTE data.
+     Het onderstreepte woord = het woord dat de klant verdiend heeft.    -->
+<section class="rs" aria-label="Reviews">
+  <h2 class="rs-kop">Kop met één onderstreept
+    <span class="rs-onder">woord<svg class="rs-lijn" viewBox="0 0 220 14" preserveAspectRatio="none" aria-hidden="true"><path d="M4 9 C 60 13, 160 3, 216 8"/></svg></span>
+  </h2>
+  <div class="rs-scores">
+    <p class="rs-score" data-score="1">
+      <span class="rs-cijfer"><span class="ster">★</span>0,0</span>
+      <span class="rs-stemmen">000 reviews · Locatie 1 (vervang)</span>
+    </p>
+    <span class="rs-punt" aria-hidden="true"></span>
+    <p class="rs-score" data-score="2">
+      <span class="rs-cijfer"><span class="ster">★</span>0,0</span>
+      <span class="rs-stemmen">000 reviews · Locatie 2 (vervang)</span>
+    </p>
+  </div>
+  <p class="rs-bron">Bron: Google-reviews, maand jaar (vervang — verplicht)</p>
+</section>
+
+<script>
+/* ── LOSSE MODUS: onthullen zodra het blok in beeld komt ─────────────────
+   IN HET TONEEL (blok 01)? Verwijder dit script en gebruik de callback:
+
+   window.SCENES[3] = function (p, gsap) {
+     var sc = document.querySelector('.rs');
+     p = comp(p);
+     fadeUp(gsap, sc.querySelector('.rs-kop'), p, 0.10, 0.25);
+     gsap.set(sc.querySelector('.rs-lijn path'),
+       { strokeDashoffset: 230 * (1 - frac(p, 0.30, 0.60)) });
+     fadeUp(gsap, sc.querySelector('[data-score="1"]'), p, 0.45, 0.57);
+     fadeUp(gsap, sc.querySelector('[data-score="2"]'), p, 0.60, 0.72);
+     gsap.set(sc.querySelector('.rs-bron'), { opacity: frac(p, 0.70, 0.80) });
+   };
+*/
+(function () {
+  'use strict';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var sc = document.querySelector('.rs');
+  if (!sc) return;
+
+  function frac(p, a, b) {
+    var t = (p - a) / (b - a);
+    t = t < 0 ? 0 : t > 1 ? 1 : t;
+    return 1 - (1 - t) * (1 - t);
+  }
+  function toon(p) { /* zelfde choreografie als in het toneel, p 0..1 */
+    var kop = sc.querySelector('.rs-kop');
+    var lijn = sc.querySelector('.rs-lijn path');
+    var s1 = sc.querySelector('[data-score="1"]');
+    var s2 = sc.querySelector('[data-score="2"]');
+    var bron = sc.querySelector('.rs-bron');
+    var t;
+    t = frac(p, 0.00, 0.22); kop.style.opacity = t; kop.style.transform = 'translateY(' + (20 * (1 - t)) + 'px)';
+    if (lijn) lijn.style.strokeDashoffset = 230 * (1 - frac(p, 0.20, 0.55));
+    t = frac(p, 0.40, 0.60); if (s1) { s1.style.opacity = t; s1.style.transform = 'translateY(' + (20 * (1 - t)) + 'px)'; }
+    t = frac(p, 0.55, 0.75); if (s2) { s2.style.opacity = t; s2.style.transform = 'translateY(' + (20 * (1 - t)) + 'px)'; }
+    if (bron) bron.style.opacity = frac(p, 0.75, 0.95);
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      var t0 = null;
+      var DUUR = 1600; /* ms — traag en fysiek */
+      function stap(ts) {
+        if (t0 === null) t0 = ts;
+        var p = Math.min(1, (ts - t0) / DUUR);
+        toon(p);
+        if (p < 1) requestAnimationFrame(stap);
+      }
+      requestAnimationFrame(stap);
+    });
+  }, { threshold: 0.4 });
+  io.observe(sc);
+})();
+</script>
+</body>
+</html>

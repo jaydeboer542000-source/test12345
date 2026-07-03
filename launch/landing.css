@@ -1,0 +1,110 @@
+/* ============================================================
+   LANDING-LAAG — de funnel bovenop de cinematische sectie.
+   De "machine" (engine.css) blijft ongemoeid; dit ligt eroverheen.
+   ============================================================ */
+
+/* per-wereld cinematische titels (Aqua Nocturne enz.) blijven zichtbaar — boven de knop */
+
+/* scrim iets sterker zodat tekst leesbaar blijft over felle werelden */
+.scrim{height:52vh;
+  background:linear-gradient(to top, rgba(2,5,11,.74) 0%, rgba(2,5,11,.34) 42%, transparent 100%)}
+
+/* ---- maker-mark linksboven: een persoon (zelfde als Instagram) ---- */
+.makermark{position:fixed;left:6vw;top:5vh;z-index:9;pointer-events:none;
+  display:flex;align-items:baseline;gap:9px;text-shadow:0 2px 20px rgba(0,0,0,.55)}
+.mm-name{font:430 19px/1 "Fraunces",Georgia,serif;letter-spacing:.02em;color:#fff;opacity:.96}
+.mm-dot{font:600 13px/1 "Inter",system-ui,sans-serif;color:#fff;opacity:.7}
+.mm-sub{font:600 10px/1 "Inter",system-ui,sans-serif;
+  letter-spacing:.30em;text-transform:uppercase;color:#fff;opacity:.62}
+
+/* ---- horloge = demo, geen echt merk ---- */
+.demo-tag{position:fixed;right:5vw;top:6vh;z-index:9;pointer-events:none;
+  font:600 9px/1 "Inter",system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;
+  color:#fff;opacity:.4}
+
+/* ---- offer-blok linksonder ---- */
+/* ---- knop onderaan (waar de swipe-balk zat); op elke scene, opent het paneel ---- */
+.cta-bar{position:fixed;left:0;right:0;bottom:calc(5vh + env(safe-area-inset-bottom));z-index:9;
+  display:flex;justify-content:center;pointer-events:none;padding:0 6vw}
+.cta-pill{pointer-events:auto;cursor:pointer;white-space:nowrap;border:0;
+  background:#fff;color:#0a1422;font:600 14px/1 "Inter",system-ui,sans-serif;letter-spacing:.01em;
+  padding:16px 32px;border-radius:999px;box-shadow:0 10px 34px rgba(0,0,0,.45);
+  transition:transform .15s ease,box-shadow .15s ease}
+.cta-pill:hover{transform:translateY(-2px);box-shadow:0 14px 42px rgba(0,0,0,.55)}
+/* swipe-balk (dots) + swipe-hint weg — de knop staat nu onderaan */
+.dots{display:none!important}
+.hint{display:none!important}
+
+/* ---- het signup-paneel ---- */
+.panel-backdrop{position:fixed;inset:0;z-index:50;display:grid;place-items:center;
+  background:rgba(4,8,16,.72);backdrop-filter:blur(10px);animation:panelFade .25s ease}
+.panel-backdrop[hidden]{display:none}
+@keyframes panelFade{from{opacity:0}to{opacity:1}}
+/* carousel-beweging bevriezen achter het paneel */
+body.panel-open .carousel *{animation-play-state:paused!important}
+
+.panel-card{position:relative;width:calc(100% - 40px);max-width:440px;
+  background:#0b1422;border:1px solid rgba(255,255,255,.12);border-radius:18px;
+  padding:34px 30px 28px;box-shadow:0 40px 100px rgba(0,0,0,.55);
+  animation:panelRise .3s cubic-bezier(.16,.84,.3,1)}
+@keyframes panelRise{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.panel-close{position:absolute;top:12px;right:14px;border:0;background:none;cursor:pointer;
+  color:#fff;opacity:.5;font:300 26px/1 system-ui,sans-serif;padding:4px 8px}
+.panel-close:hover{opacity:.9}
+.panel-mark{font:600 10px/1 "Inter",system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#fff;opacity:.5}
+.panel-title{margin-top:14px;font-family:"Fraunces",Georgia,serif;font-optical-sizing:auto;
+  font-size:28px;line-height:1.05;font-weight:440;color:#eaf3ff}
+.panel-value{margin-top:10px;font:400 14px/1.5 "Inter",system-ui,sans-serif;color:#eaf3ff;opacity:.78}
+.panel-note{margin-top:14px;font:400 12px/1.4 "Inter",system-ui,sans-serif;color:#fff;opacity:.45}
+
+/* ---- MailerLite-form op de kalme kaart (geen gevecht met de scene meer) ---- */
+.panel-card .ml-embedded{margin-top:20px}
+.panel-card .ml-form-embedContainer,.panel-card .ml-form-embedWrapper,.panel-card .ml-form-embedBody,
+.panel-card .ml-form-successBody,.panel-card .ml-form-embedBodyDefault{background:transparent!important;border:0!important;
+  box-shadow:none!important;padding:0!important;margin:0!important;width:auto!important;max-width:none!important;
+  text-align:left!important;font-family:"Inter",system-ui,sans-serif!important}
+.panel-card .ml-form-embedContent{display:none!important}
+.panel-card .ml-form-fieldRow{margin:0 0 12px 0!important;padding:0!important}
+.panel-card .ml-embedded input[type=email],.panel-card .ml-embedded input.form-control,
+.panel-card .ml-form-embedBody input{
+  background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.18)!important;
+  color:#fff!important;border-radius:11px!important;padding:14px 16px!important;height:auto!important;width:100%!important;
+  font:400 15px/1.2 "Inter",system-ui,sans-serif!important;box-shadow:none!important}
+.panel-card .ml-embedded input[type=email]::placeholder{color:rgba(255,255,255,.5)!important}
+.panel-card .ml-form-embedSubmit button,.panel-card .ml-embedded button[type=submit],
+.panel-card .ml-embedded button.primary{
+  background:#fff!important;color:#0a1422!important;border:0!important;border-radius:11px!important;
+  padding:14px 22px!important;width:100%!important;
+  font:600 14px/1 "Inter",system-ui,sans-serif!important;cursor:pointer;box-shadow:none!important}
+.panel-card .ml-form-embedSubmit button:hover{opacity:.92!important}
+.panel-card .ml-form-embedPermissions,.panel-card .ml-form-checkboxRow,.panel-card .ml-form-checkboxRow label,
+.panel-card .ml-form-checkboxRow .label-description,.panel-card .ml-form-checkboxRow p,
+.panel-card .ml-form-embedPermissions p{color:rgba(255,255,255,.6)!important;
+  font:400 12px/1.45 "Inter",system-ui,sans-serif!important;margin:2px 0!important}
+.panel-card .ml-form-successBody .ml-form-successContent h4,
+.panel-card .ml-form-successBody .ml-form-successContent p{color:#eaf3ff!important}
+
+/* ---- mobiel: alles onderin, formulier gestapeld ---- */
+@media (max-width:768px){
+  /* horloge groot houden (held), iets omhoog zodat titel + knop eronder passen */
+  .product img{height:42vh!important}
+  .pool,.glow,.flash,.product{top:37%!important}
+  .scrim{height:62vh;
+    background:linear-gradient(to top, rgba(4,8,16,.95) 0%, rgba(4,8,16,.7) 34%, rgba(4,8,16,.14) 66%, transparent 100%)}
+  /* per-wereld titel boven de knop */
+  .copy{left:0;right:0;bottom:15vh;padding:0 7vw;max-width:none}
+  .title{font-size:clamp(30px,8vw,42px)}
+  .sub{font-size:14px}
+  /* knop helemaal onderaan (waar de swipe-balk zat) */
+  .cta-bar{bottom:calc(4.5vh + env(safe-area-inset-bottom));padding:0 6vw}
+  .cta-pill{padding:16px 34px;font-size:15px}
+  /* demo-tag weg op mobiel (te krap naast de maker-mark) */
+  .demo-tag{display:none}
+  /* paneel = bottom-sheet, toetsenbord-veilig (dvh + safe-area + intern scrollen) */
+  .panel-backdrop{place-items:end stretch}
+  .panel-card{width:100%;max-width:none;max-height:90vh;max-height:90dvh;overflow:auto;
+    border-radius:22px 22px 0 0;padding:28px 22px calc(24px + env(safe-area-inset-bottom));
+    animation:sheetUp .3s cubic-bezier(.16,.84,.3,1)}
+  @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+}
+@media (prefers-reduced-motion: reduce){ .offer{animation:none;opacity:1} }

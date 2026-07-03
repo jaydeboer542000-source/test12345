@@ -1,0 +1,14 @@
+# Geheime sleutels — NOOIT naar GitHub
+.env
+*.env
+**/.env
+
+# Systeem- en werkbestanden
+.DS_Store
+node_modules/
+nohup.out
+*.log
+
+# AI-sessie-data (kan gevoelige gespreksdata bevatten)
+.claude-flow/
+.playwright-mcp/

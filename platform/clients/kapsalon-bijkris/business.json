@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "slug": "kapsalon-bijkris",
+    "source": "Google Places lead-finder",
+    "query": "kapper in Wijchen"
+  },
+  "identity": {
+    "name": "Kapsalon BijKris ✂",
+    "category": "hair salon",
+    "language": "nl"
+  },
+  "locations": [
+    {
+      "id": "main",
+      "label": "Kapsalon BijKris ✂",
+      "address": "Ringlaan 129, 6602 DV Wijchen, Netherlands",
+      "phone": "06 19262006"
+    }
+  ],
+  "contact": {
+    "website": "https://kapsalonbijkris.nl/"
+  },
+  "reviews": {
+    "google": {
+      "rating": 5,
+      "count": 4
+    }
+  },
+  "_review_queue": [
+    "photos",
+    "services",
+    "hours (scrape/confirm)"
+  ]
+}

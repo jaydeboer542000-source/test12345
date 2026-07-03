@@ -1,0 +1,163 @@
+/* ============================================================
+   DE MACHINE (looks) — niet aanpassen per sectie.
+   Alle styling + animaties van de floating-product carrousel.
+   Wat per sectie verandert staat in config.js (het kaartje).
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:#03060c;color:#eaf3ff;
+     font-family:"Fraunces",Georgia,serif;-webkit-font-smoothing:antialiased;touch-action:pan-y}
+
+.carousel{position:fixed;inset:0;overflow:hidden;cursor:grab;
+          transition:transform .9s cubic-bezier(.66,0,.2,1)}
+.carousel.grabbing{cursor:grabbing}
+/* cinematische overgang: scene zakt heel even terug + dimt (geen full-screen blur = veel lichter) */
+/* subtiele 'ademhaling' = licht inzoomen (crop, geen zwarte rand) + zacht dimmen */
+.carousel.transitioning{transform:scale(1.012)}
+.carousel.transitioning .track{filter:brightness(.9)}
+.track{display:flex;height:100%;transition:filter .9s ease}
+.track.anim{transition:transform .9s cubic-bezier(.66,0,.2,1),filter .9s ease}
+
+/* ===== PRESTATIE: alleen de ACTIEVE scene rekent ===== */
+/* niet-actieve slides: geen gloed/flits/sfeer (zware blur+blend uit) en geen lopende animaties */
+.slide:not(.active) .glow,
+.slide:not(.active) .flash,
+.slide:not(.active) .ambient{display:none}
+.slide:not(.active) .world,
+.slide:not(.active) .product img{animation:none}
+
+/* per-scene knoppen (defaults; per mood overschreven) */
+.slide{position:relative;flex:0 0 100%;height:100%;overflow:hidden;
+       --glow:#4db6ff;
+       --float-amp:-16px; --float-dur:7s;
+       --glow-w:62vmin; --pulse-dur:5.5s; --bloom-op:.85;
+       --intro-dur:1.6s; --intro-y:34px; --intro-blur:12px; --intro-scale:.92}
+
+.world{position:absolute;inset:-4%;background:var(--world) center/cover no-repeat;
+       filter:saturate(1.08) brightness(.72);
+       animation:drift 26s ease-in-out infinite alternate;transform-origin:center}
+.world::after{content:"";position:absolute;inset:0;
+       background:radial-gradient(120% 90% at 50% 40%, transparent 30%, rgba(2,6,14,.72) 100%)}
+
+.pool{position:absolute;left:50%;top:47%;width:86vmin;height:86vmin;transform:translate(-50%,-50%);
+      background:radial-gradient(circle, rgba(1,5,12,.92) 0%, rgba(1,5,12,.55) 36%, transparent 66%)}
+
+/* ---- sfeerlaag per scene ---- */
+.ambient{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.amb-sweep{position:absolute;inset:-25%;
+  background:linear-gradient(115deg,transparent 42%,rgba(150,222,255,.10) 50%,transparent 58%);
+  animation:sweep 9s ease-in-out infinite}
+.amb-fog{position:absolute;inset:-25%;
+  background:radial-gradient(60% 50% at 50% 60%, rgba(30,60,120,.16), transparent 70%);
+  animation:fog 16s ease-in-out infinite alternate}
+.amb-spark{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;opacity:0;
+  box-shadow:0 0 9px 2px rgba(200,160,255,.85);animation:twinkle 3.6s ease-in-out infinite}
+.amb-mote{position:absolute;top:-6%;width:5px;height:5px;border-radius:50%;
+  background:rgba(180,255,200,.45);filter:blur(.5px);animation:fall linear infinite}
+
+.glow{position:absolute;left:50%;top:47%;width:var(--glow-w);height:var(--glow-w);transform:translate(-50%,-50%);
+      background:radial-gradient(circle, rgba(150,222,255,0) 0%, var(--glow) 26%, transparent 70%);
+      filter:blur(18px);opacity:0;mix-blend-mode:screen}
+.glow::before{content:"";position:absolute;inset:30%;border-radius:50%;
+      background:radial-gradient(circle, #eaf7ff 0%, var(--glow) 45%, transparent 74%);
+      filter:blur(12px);opacity:1}
+
+.flash{position:absolute;left:50%;top:47%;width:74vmin;height:74vmin;transform:translate(-50%,-50%);
+       background:radial-gradient(circle, #eaf7ff 0%, var(--glow) 32%, transparent 62%);
+       mix-blend-mode:screen;opacity:0;pointer-events:none}
+
+/* .product doet ALLEEN centreren (nooit geanimeerd) -> geen horizontale sprong op mobiel */
+.product{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);z-index:3}
+.product img{display:block;height:60vmin;max-width:86vw;object-fit:contain;pointer-events:none;opacity:1;
+         filter:drop-shadow(0 20px 38px rgba(0,0,0,.55))}
+/* wijzerplaat-tint: kleurt de (donkere) wijzerplaat naar de wereldkleur, gemaskeerd op het horloge.
+   screen-blend = donkere dial pakt kleur, goud blijft grotendeels goud */
+.ptint{position:absolute;inset:0;pointer-events:none;background:var(--glow);
+       mix-blend-mode:screen;opacity:var(--tint-op,0)}
+
+/* actieve slide: intro + gloed-bloom + naadloze zweef (delay = introduur) */
+.slide.active .glow{animation:bloom 1.8s .2s ease-out forwards, pulse var(--pulse-dur) 2s ease-in-out infinite}
+/* intro + zweef beide op de AFBEELDING (translateY only) -> naadloos + nooit horizontale sprong */
+/* horloge zweeft altijd zodra de scene actief is (nooit onzichtbaar) */
+.slide.active .product img{animation:float var(--float-dur) ease-in-out infinite}
+/* de dramatische entree speelt ALLEEN de eerste keer (klasse .intro, motor haalt 'm na afloop weg) */
+.slide.active.intro .product img{animation:introIn var(--intro-dur) cubic-bezier(.16,.84,.3,1) forwards,
+                                     float var(--float-dur) var(--intro-dur) ease-in-out infinite}
+.slide.active .copy{animation:fadeUp 1s 1.0s ease forwards}
+/* alleen water + kristal krijgen een flits-intro — ALLEEN de eerste keer (.intro),
+   niet bij elke swipe terug naar de scene (flits op't horloge = leek een bug) */
+.mood-aqua.active.intro .flash,.mood-crystal.active.intro .flash{animation:flash 1.2s ease-out forwards}
+
+/* ---- moods (het gevoel per scene) ---- */
+/* elke scene een duidelijk andere intro: richting (omhoog/omlaag), afstand, tempo */
+.mood-aqua   {--float-amp:-16px;--float-dur:7s; --glow-w:62vmin;--pulse-dur:5.5s;--bloom-op:.85;
+              --intro-dur:1.6s;--intro-y:34px; --intro-blur:12px;--intro-scale:.92}
+.mood-abyss  {--float-amp:-10px;--float-dur:10s;--glow-w:52vmin;--pulse-dur:8.5s;--bloom-op:.7;
+              --intro-dur:2.7s;--intro-y:78px; --intro-blur:22px;--intro-scale:.82}
+.mood-crystal{--float-amp:-23px;--float-dur:6s; --glow-w:58vmin;--pulse-dur:3.6s;--bloom-op:.95;
+              --intro-dur:0.95s;--intro-y:8px; --intro-blur:5px; --intro-scale:.96}
+.mood-verde  {--float-amp:-13px;--float-dur:8.5s;--glow-w:56vmin;--pulse-dur:6.5s;--bloom-op:.8;
+              --intro-dur:2.2s;--intro-y:-44px;--intro-blur:10px;--intro-scale:.97}
+
+.copy{position:absolute;left:6vw;bottom:13vh;z-index:5;max-width:42ch;opacity:0}
+.kicker{font:600 12px/1 "Inter",system-ui,sans-serif;letter-spacing:.34em;text-transform:uppercase;
+        color:var(--glow);opacity:.92;margin-bottom:16px}
+.title{font-family:"Fraunces",Georgia,serif;font-optical-sizing:auto;
+       font-size:clamp(36px,6.2vw,72px);line-height:1.0;font-weight:430;letter-spacing:.2px;
+       text-shadow:0 2px 30px rgba(0,0,0,.4)}
+.sub{margin-top:14px;font-size:15px;line-height:1.5;opacity:.78;font-family:"Inter",system-ui,sans-serif;letter-spacing:.2px}
+
+/* merk-wordmark linksboven */
+.brand{position:fixed;left:6vw;top:5vh;z-index:9;
+       font:500 15px/1 "Fraunces",Georgia,serif;letter-spacing:.42em;text-transform:uppercase;
+       color:#fff;opacity:.85;pointer-events:none;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+
+/* bodem-scrim: tekst altijd leesbaar over elke wereld */
+.scrim{position:fixed;left:0;right:0;bottom:0;height:42vh;z-index:4;pointer-events:none;
+       background:linear-gradient(to top, rgba(2,5,11,.62) 0%, rgba(2,5,11,.28) 38%, transparent 100%)}
+
+/* kleur-grade: het licht van de wereld valt op de scene + sterkst op het product,
+   zodat horloge en achtergrond bij elkaar horen (1 laag, alleen actieve scene) */
+.grade{position:absolute;inset:0;z-index:3;pointer-events:none;mix-blend-mode:soft-light;
+       opacity:var(--grade-op,.6);
+       background:radial-gradient(circle at 50% 46%, var(--glow) 0%, transparent 62%)}
+
+.vign{position:absolute;inset:0;z-index:3;pointer-events:none;
+      background:radial-gradient(ellipse 78% 78% at 50% 47%, transparent 42%, rgba(2,5,11,.55) 100%)}
+
+.arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:9;cursor:pointer;
+       width:54px;height:54px;border-radius:50%;display:grid;place-items:center;
+       background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
+       color:#fff;font-size:22px;transition:background .25s;user-select:none}
+.arrow:hover{background:rgba(255,255,255,.16)}
+.arrow.prev{left:3vw}.arrow.next{right:3vw}
+.dots{position:fixed;left:50%;bottom:6vh;transform:translateX(-50%);display:flex;gap:14px;z-index:9}
+.dot{width:34px;height:4px;border-radius:4px;background:rgba(255,255,255,.22);cursor:pointer;transition:background .3s,width .3s}
+.dot.on{background:#fff;width:48px}
+.hint{position:fixed;right:5vw;bottom:13vh;z-index:9;font:600 11px/1 system-ui,sans-serif;
+      letter-spacing:.28em;text-transform:uppercase;opacity:.4;pointer-events:none}
+
+@keyframes drift{from{transform:scale(1.04) translate(-1%,0)}to{transform:scale(1.1) translate(1%,-1.5%)}}
+@keyframes introIn{from{opacity:0;transform:translateY(var(--intro-y)) scale(var(--intro-scale));filter:blur(var(--intro-blur))}
+                   to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(var(--float-amp))}}
+@keyframes bloom{from{opacity:0;transform:translate(-50%,-50%) scale(.6)}to{opacity:var(--bloom-op);transform:translate(-50%,-50%) scale(1)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:.95}}
+@keyframes flash{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}16%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sweep{0%{transform:translateX(-30%)}50%{transform:translateX(30%)}100%{transform:translateX(-30%)}}
+@keyframes fog{from{transform:translate(-4%,2%) scale(1)}to{transform:translate(4%,-2%) scale(1.12)}}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1)}}
+@keyframes fall{to{transform:translateY(112vh)}}
+
+@media (max-width:768px){
+  .product img{height:46vh}
+  .pool,.glow,.flash,.product{top:44%}
+  .arrow{display:none}.hint{display:none}
+  .copy{bottom:16vh;left:7vw}.title{font-size:clamp(32px,9vw,52px)}
+}
+@media (prefers-reduced-motion: reduce){
+  .world,.glow,.product img,.amb-sweep,.amb-fog,.amb-spark,.amb-mote{animation:none!important}
+  .slide.active .product img{opacity:1}
+  .slide.active .glow{opacity:.7}.slide.active .copy{opacity:1}
+}
