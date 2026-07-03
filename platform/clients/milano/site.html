@@ -128,22 +128,25 @@ html.film #stipjes{display:flex;position:fixed;right:18px;top:50%;
 #s1 .kamer{display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center}
 /* het echte logo: klein linksboven, het beeld draagt de scène */
-/* Jays logo-intro-video = dé header van scène 1. Scrubt met de scroll:
-   naar beneden scrollen speelt de outro (logo lost op in snippers) af
-   als opening naar scène 2; terugscrollen spoelt exact terug.
-   multiply laat de lichte video-achtergrond wegvallen in het papier. */
-#s1 .logo-intro{display:block;width:min(58vw,720px);height:auto;
-  margin:0 auto;mix-blend-mode:multiply;
-  filter:brightness(1.07);
-  /* zachte ovaal: de grijze video-achtergrond smelt weg in het papier,
-     zodat alleen het logo lijkt te zweven — geen harde videorand */
-  -webkit-mask-image:radial-gradient(ellipse 62% 52% at 50% 47%,#000 46%,transparent 74%);
-  mask-image:radial-gradient(ellipse 62% 52% at 50% 47%,#000 46%,transparent 74%)}
-@media (max-width:767px){ #s1 .logo-intro{width:min(86vw,480px)} }
-#s1 .hero-kop{font-size:clamp(1.35rem,2.4vw,2rem);max-width:none;
-  margin-top:clamp(10px,2vh,20px)}
-#s1 .subkop{margin:1.25rem 0 0;max-width:34ch}
-#s1 .hint{position:absolute;left:0;right:0;bottom:clamp(84px,13vh,120px);
+/* Jays logo-intro-video = dé header: de VOLLEDIGE video, beeldvullend,
+   als eerste sectie. Scrubt met de scroll: naar beneden spoelt de outro
+   af (logo lost op in snippers) als opening naar scène 2; terugscrollen
+   spoelt exact terug. Geen masker, geen knip — de video ís de scène. */
+#s1 .logo-intro{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;z-index:1;pointer-events:none;
+  background:radial-gradient(circle at 50% 45%, #f6f6f6, #dcdcdc)}
+/* mobiel: liggende video nooit hard bijsnijden — passend tonen,
+   de eigen grijze gradient vult de rest van het scherm */
+@media (max-width:767px){ #s1 .logo-intro{object-fit:contain} }
+/* tekst onderin, ónder het logo-beeld — de video blijft de hoofdrolspeler */
+#s1 .kamer{justify-content:flex-end;padding-bottom:clamp(48px,9vh,84px)}
+#s1 .hero-kop{font-size:clamp(1.35rem,2.4vw,2rem);max-width:none;margin:0}
+#s1 .subkop{margin:.75rem 0 0;max-width:34ch}
+@media (max-width:767px){
+  html:not(.film) #s1{align-items:flex-end}
+  html:not(.film) #s1 .kamer{padding-bottom:110px}
+}
+#s1 .hint{position:absolute;left:0;right:0;bottom:clamp(18px,3vh,32px);
   z-index:9;margin:0;font-size:.8rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--grijs);display:flex;align-items:center;
   justify-content:center;flex-wrap:wrap;gap:10px}
@@ -372,19 +375,16 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
 
     <!-- SCÈNE 1 — ENTREE (full-bleed beeld; logo klein linksboven) -->
     <section class="scene fx-scene" id="s1" aria-label="Entree">
-      <video class="decor-video decor-video--vol" data-scrub="0" muted playsinline preload="auto"
-             src="assets/decor/s1-entree-web.mp4"></video>
-      <div class="decor-sluier"></div>
+      <video class="logo-intro" data-scrub="0" muted playsinline preload="auto"
+             poster="assets/logo-intro-poster.jpg" src="assets/logo-intro.mp4"
+             aria-label="Kapsalon Milano"></video>
       <svg id="lijn-boog" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <path d="M 430 620 C 640 700, 980 660, 1140 500 S 1360 220, 1290 130"/>
       </svg>
       <div class="kamer">
         <p class="kicker fade-rise--klein" style="--i:0">Wijchen · twee salons</p>
-        <video class="logo-intro fade-only" style="--i:1" data-scrub="0"
-               muted playsinline preload="auto" poster="assets/logo-intro-poster.jpg"
-               src="assets/logo-intro.mp4" aria-label="Kapsalon Milano"></video>
-        <p class="scene-kop hero-kop fade-rise" style="--i:2">Een goede kapper in Wijchen.</p>
-        <p class="subkop fade-rise" style="--i:3">Met en zonder afspraak — <span class="nowrap">je bent welkom.</span></p>
+        <p class="scene-kop hero-kop fade-rise" style="--i:1">Een goede kapper in Wijchen.</p>
+        <p class="subkop fade-rise" style="--i:2">Met en zonder afspraak — <span class="nowrap">je bent welkom.</span></p>
       </div>
       <p class="hint fade-rise--klein" style="--i:3">Scroll — de rode lijn neemt <span class="nowrap">je mee <span class="pijl"></span></span></p>
       <div class="fx fx-grain"></div>
