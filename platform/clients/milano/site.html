@@ -110,18 +110,6 @@ html.film #rode-lijn{display:block;position:absolute;left:0;
   background:var(--rood);opacity:.85;pointer-events:none;
   transform:scaleX(0);transform-origin:left center;will-change:transform}
 
-/* ── voortgangsstipjes (alleen film-modus) ───────────────────  */
-#stipjes{display:none}
-html.film #stipjes{display:flex;position:fixed;right:18px;top:50%;
-  transform:translateY(-50%);z-index:40;flex-direction:column;gap:12px}
-#stipjes button{appearance:none;border:0;cursor:pointer;padding:0;
-  width:8px;height:8px;border-radius:50%;
-  background:color-mix(in srgb, var(--inkt) 22%, transparent);
-  transition:background var(--dur-kort) var(--ease-huis),
-             transform var(--dur-kort) var(--ease-huis)}
-#stipjes button.actief{background:var(--rood);transform:scale(1.35)}
-@media (max-width:640px){ html.film #stipjes{right:10px} }
-
 /* ════════════════════════════════════════════════════════════
    SCÈNE 1 — ENTREE (het echte logo + de lijn vertrekt)
    ════════════════════════════════════════════════════════════ */
@@ -356,7 +344,6 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
    ════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce){
   #lijn-boog path{animation:none;stroke-dashoffset:0}
-  #stipjes button{transition:none}
   .knop,#afspraak-fab{transition:none}
   .fade-rise,.fade-rise--klein,.fade-rise--groot,.clip-reveal,
   .draw-line,.fade-only{opacity:1;transform:none;transition:none;clip-path:none}
@@ -557,16 +544,6 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
   </div>
 </div>
 
-<!-- voortgangsstipjes -->
-<nav id="stipjes" aria-label="Scène-navigatie">
-  <button type="button" data-stip="0" aria-label="Scène 1 — entree"></button>
-  <button type="button" data-stip="1" aria-label="Scène 2 — het ritueel"></button>
-  <button type="button" data-stip="2" aria-label="Scène 3 — reviews"></button>
-  <button type="button" data-stip="3" aria-label="Scène 4 — vestigingen"></button>
-  <button type="button" data-stip="4" aria-label="Scène 5 — prijzen"></button>
-  <button type="button" data-stip="5" aria-label="Scène 6 — afspraak maken"></button>
-</nav>
-
 <!-- ═══════════ FOOTER — alle praktische info ═══════════ -->
 <footer id="site-footer">
   <div class="footer-kop">
@@ -687,7 +664,6 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
   var strook = document.getElementById('strook');
   var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
   var N = scenes.length;                       // 6
-  var stips = Array.prototype.slice.call(document.querySelectorAll('#stipjes button'));
 
   /* decor- en logo-video's die met de scroll scrubben (de filmrol
      draait alleen als jij scrollt) */
@@ -713,15 +689,10 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
 
   var st = null;
   var lijn = document.getElementById('rode-lijn');
-  var huidige = 0;          // scène waar de camera nu op rust/heen gaat
-  var animatie = false;     // true zolang wij zelf de scroll sturen
 
   function bijwerken(progress){
     var g = progress * (N - 1);                // 0..5 langs de reis
     for (var i = 0; i < N; i++) if (g > i - 0.5) onthul(i);
-    var actief = Math.round(g);
-    if (!animatie) huidige = actief;
-    stips.forEach(function(b, i){ b.classList.toggle('actief', i === actief); });
     /* ── VERTICALE scène-wissel (Jay-regel: nooit zijwaarts) ──
        vertrekkende scène stijgt zacht en vervaagt; de nieuwe
        komt van onder omhoog. Pure functie van g → exact omkeerbaar. */
@@ -764,89 +735,23 @@ html.film #s5 .kamer{display:flex;flex-direction:column;justify-content:center}
     trigger: '#toneel',
     start: 'top top',
     /* ruimere scroll-lengte: ± één schermhoogte per scène-wissel */
-    end: function(){ return '+=' + Math.round((N - 1) * window.innerHeight * 1.1); },
+    /* ruime scroll-lengte per scène: hoe langer, hoe fijner je de video
+       frame voor frame kunt sturen met kleine scroll-bewegingen */
+    end: function(){ return '+=' + Math.round((N - 1) * window.innerHeight * 1.4); },
     pin: true,
     anticipatePin: 1,
     invalidateOnRefresh: true,
     onUpdate: function(self){ bijwerken(self.progress); },
-    onRefresh: function(self){ bijwerken(self.progress); },
-    onToggle: function(self){
-      if (!kijker) return;
-      if (self.isActive) { kijker.enable(); }
-      else { kijker.disable(); }
-    }
+    onRefresh: function(self){ bijwerken(self.progress); }
   });
 
-  /* ── snap-discipline: één wheel/swipe-burst = maximaal één scène.
-        We vangen wheel/touch zelf af zolang het toneel gepind staat
-        en rijden de scroll gecontroleerd naar de volgende grens. */
-  function grens(i){ return st.start + (i / (N - 1)) * (st.end - st.start); }
-  var scrollTween = null;
-  function rijd(doelY, duur){
-    if (scrollTween) scrollTween.kill();
-    animatie = true;
-    var pos = { y: window.scrollY };
-    scrollTween = gsap.to(pos, {
-      y: doelY, duration: duur, ease: 'power2.inOut',
-      onUpdate: function(){ window.scrollTo(0, pos.y); },
-      onComplete: function(){
-        /* korte afkoeling: een nasleep van dezelfde swipe/wheel-burst
-           mag niet meteen een tweede scène pakken */
-        gsap.delayedCall(0.35, function(){ animatie = false; scrollTween = null; });
-      }
-    });
-  }
-  function gaNaar(i){
-    i = Math.max(0, Math.min(N - 1, i));
-    huidige = i;
-    rijd(grens(i), 0.9);
-  }
-  function stap(richting){
-    if (animatie) return;
-    /* scène ALTIJD deterministisch uit de scrollpositie afleiden:
-       ook na scrollbar-slepen, deeplinks of snelle jumps klopt de stap */
-    huidige = Math.max(0, Math.min(N - 1, Math.round(st.progress * (N - 1))));
-    if (richting > 0 && huidige === N - 1) {
-      /* laatste scène: rustig de pin uit, richting footer */
-      rijd(st.end + 12, 0.7);
-      return;
-    }
-    if (richting < 0 && huidige === 0) return;
-    gaNaar(huidige + richting);
-  }
-  var kijker = ScrollTrigger.observe({
-    target: window,
-    type: 'wheel,touch',
-    tolerance: 12,
-    wheelSpeed: -1,          /* wheel en swipe dezelfde kant op laten wijzen */
-    preventDefault: true,
-    onUp: function(){ stap(1) },     /* wheel omlaag / swipe omhoog → verder */
-    onDown: function(){ stap(-1) }   /* wheel omhoog / swipe omlaag → terug */
-  });
-  kijker.disable();
-  if (st.isActive || window.scrollY <= st.start + 2) kijker.enable();
-
-  /* vangnet voor scrollbar/toetsenbord: komt de scroll tot rust
-     tussen twee scènes in, rijd dan ALTIJD door naar de grens */
-  var rustTimer = null;
-  window.addEventListener('scroll', function(){
-    if (animatie || !st.isActive) return;
-    clearTimeout(rustTimer);
-    rustTimer = setTimeout(function(){
-      if (animatie || !st.isActive) return;
-      var g = st.progress * (N - 1);
-      if (Math.abs(g - Math.round(g)) > 0.02) gaNaar(Math.round(g));
-    }, 180);
-  }, { passive: true });
-
-  /* stipje aanklikken → gecontroleerd naar die scène rijden */
-  stips.forEach(function(b, i){
-    b.addEventListener('click', function(){ gaNaar(i); });
-  });
+  /* ── GEEN scroll-stuur (Jay-regel 2026-07-03): de scroll blijft 100%
+        van de bezoeker. Geen snap, geen wheel-onderschepping, geen
+        automatisch doorrijden — je ziet de video en de scène-wissels
+        frame voor frame op je eigen beweging, vooruit én achteruit. */
 
   /* scène 1 staat al in beeld: meteen onthullen */
   onthul(0);
-  stips[0].classList.add('actief');
 })();
 </script>
 </body>
